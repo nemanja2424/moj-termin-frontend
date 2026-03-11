@@ -101,8 +101,8 @@ export default function ZakaziPage() {
         };
         
         const url = localhost
-            ? 'https://mojtermin.site/api/zakazi'
-            : 'https://mojtermin.site/api/zakazi';
+            ? 'http://127.0.0.1:5000/api/zakazi'
+            : 'http://127.0.0.1:5000/api/zakazi';
 
         try {
             const res = await fetch(url, {
