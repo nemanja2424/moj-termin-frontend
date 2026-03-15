@@ -69,7 +69,7 @@ export default function NaloziPage() {
         try {
             const userId = localStorage.getItem("userId");
             const authToken = localStorage.getItem('authToken');
-            const res = await fetch(`http://127.0.0.1:5000/api/zaposleni/novi/${userId}`, {
+            const res = await fetch(`https://test.mojtermin.site/api/zaposleni/novi/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${authToken}`,
@@ -107,7 +107,7 @@ export default function NaloziPage() {
         const authToken = localStorage.getItem("authToken");
 
         try {
-            const res = await fetch(`http://127.0.0.1:5000/api/zaposleni/${userId}`, {
+            const res = await fetch(`https://test.mojtermin.site/api/zaposleni/${userId}`, {
                 headers: {
                     Authorization: `Bearer ${authToken}`,
                 },
@@ -149,7 +149,7 @@ export default function NaloziPage() {
         setLoadingIzmeniId(korisnik.id);
         try {
             const authToken = localStorage.getItem("authToken");
-            const res = await fetch(`http://127.0.0.1:5000/api/zaposleni/izmena/${korisnik.id}`, {
+            const res = await fetch(`https://test.mojtermin.site/api/zaposleni/izmena/${korisnik.id}`, {
                 method:'PATCH',
                 headers:{
                     'Authorization': `Bearer ${authToken}`,
@@ -184,7 +184,7 @@ export default function NaloziPage() {
         setLoadingObrisiId(id);
         try {
             const authToken = localStorage.getItem('authToken');
-            const res = await fetch(`http://127.0.0.1:5000/api/zaposleni/${id}`, {
+            const res = await fetch(`https://test.mojtermin.site/api/zaposleni/${id}`, {
                 method:'DELETE',
                 headers:{
                     'Authorization': `Bearer ${authToken}`,
@@ -234,7 +234,7 @@ export default function NaloziPage() {
         setLoadingSpinPass(true);
         try {
             const authToken = localStorage.getItem('authToken');
-            const res = await fetch(`http://127.0.0.1:5000/api/zaposleni/nova-lozinka/${korisnikZaNovuSifru.id}`, {
+            const res = await fetch(`https://test.mojtermin.site/api/zaposleni/nova-lozinka/${korisnikZaNovuSifru.id}`, {
                 method:'PATCH',
                 headers:{
                     'Authorization': `Bearer ${authToken}`,

@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  metadataBase: new URL("http://127.0.0.1:5000"),
+  metadataBase: new URL("https://test.mojtermin.site"),
 
   title: {
     default: "MojTermin – Online zakazivanje termina i pregleda u Srbiji",
@@ -34,7 +34,7 @@ export const metadata = {
   },
 
   alternates: {
-    canonical: "http://127.0.0.1:5000",
+    canonical: "https://test.mojtermin.site",
   },
 
   icons: {
@@ -44,7 +44,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "sr_RS",
-    url: "http://127.0.0.1:5000",
+    url: "https://test.mojtermin.site",
     siteName: "MojTermin",
     title: "MojTermin – Online zakazivanje termina",
     description:
