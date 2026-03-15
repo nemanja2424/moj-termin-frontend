@@ -180,7 +180,7 @@ const AGENT_MAPPER = {
       id: localStorage.getItem("userId"),
       podaci: {
         datum_rezervacije: body.datum_rezervacije,
-        trajanje: body.duzina_termina,
+        trajanje: body.cenovnik,
         ime: body.ime,
         email: body.email,
         telefon: body.telefon,
@@ -201,7 +201,7 @@ const AGENT_MAPPER = {
         token: body.token,
         podaci: {
           datum_rezervacije: body.datum_rezervacije,
-          trajanje: body.duzina_termina,
+          trajanje: body.cenovnik,
           ime: body.ime,
           email: body.email,
           telefon: body.telefon,
@@ -221,7 +221,7 @@ const AGENT_MAPPER = {
     }
   },
   "otkazivanje": {
-    endpoint: "/api/zakazi/otkazi",
+    endpoint: "/api/otkazi",
     method: "PATCH",
     extract: (body) => ({
       token: body.token,

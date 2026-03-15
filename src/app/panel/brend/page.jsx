@@ -38,7 +38,7 @@ export default function BrendPage() {
             const userId = localStorage.getItem("userId");
             if (userId === null) return;
 
-            const res = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/zakazi/${userId}/forma`);
+            const res = await fetch(`http://127.0.0.1:5000/api/zakazi/${userId}/forma`);
             const data = await res.json();
 
             localStorage.setItem('zakaziForma', JSON.stringify(data.forma));
@@ -129,7 +129,7 @@ export default function BrendPage() {
             izgled: selectedDesign
         };
 
-        const res = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/brend/${userId}`, {
+        const res = await fetch(`http://127.0.0.1:5000/api/brend/${userId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -256,7 +256,7 @@ export default function BrendPage() {
                         <form className={styles.strukturaForm}>
                             <h3>Izaberi polja za formu</h3>
                             {Object.entries(formaStruktura)
-                                .filter(([k, v]) => typeof v === 'boolean' && k !== 'logoFirme' && k !== 'nazivFirme' && k !== 'email' && k !== 'vreme' && k !== 'datum' && k !== 'trajanje' && k!== 'lokacija')
+                                .filter(([k, v]) => typeof v === 'boolean' && k !== 'logoFirme' && k !== 'nazivFirme' && k !== 'email' && k !== 'vreme' && k !== 'datum' && k !== 'cenovnik' && k!== 'lokacija')
                                 .map(([field, value]) => {
                                     const isLokacijaLocked = (paket === 'Personalni' || paket === 'Osnovni') && field === 'lokacija';
 

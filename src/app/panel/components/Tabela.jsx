@@ -53,22 +53,31 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
 
   function formatirajDatum(datum) {
     if (!datum) return '';
-    const [godina, mesec, dan] = datum.split('-');
-    return `${dan}.${mesec}.${godina}`;
+    try {
+      // Ako je format sa vremenom (2026-03-19T10:00), uzmi samo datum
+      const datumStr = datum.split('T')[0];
+      const [godina, mesec, dan] = datumStr.split('-');
+      return `${dan}.${mesec}.${godina}`;
+    } catch (e) {
+      return datum;
+    }
   }
   function formatirajTimestamp(timestamp) {
     if (!timestamp) return '';
-
-    const date = new Date(timestamp);
-
-    const dan = String(date.getDate()).padStart(2, '0');
-    const mesec = String(date.getMonth() + 1).padStart(2, '0'); // meseci su 0-based
-    const godina = date.getFullYear();
-
-    const sati = String(date.getHours()).padStart(2, '0');
-    const minuti = String(date.getMinutes()).padStart(2, '0');
-
-    return `${dan}.${mesec}.${godina} ${sati}:${minuti}`;
+    try {
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime())) {
+        return timestamp; // Ako ne mogu da parsniram, vrati original
+      }
+      const dan = String(date.getDate()).padStart(2, '0');
+      const mesec = String(date.getMonth() + 1).padStart(2, '0');
+      const godina = date.getFullYear();
+      const sati = String(date.getHours()).padStart(2, '0');
+      const minuti = String(date.getMinutes()).padStart(2, '0');
+      return `${dan}.${mesec}.${godina} ${sati}:${minuti}`;
+    } catch (e) {
+      return timestamp;
+    }
   }
 
 
@@ -84,9 +93,9 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
         if (sortKey === 'datum') {
           valA = new Date(valA);
           valB = new Date(valB);
-        } else if (sortKey === 'lokacija') {
-          valA = a.lokacija?.ime || '';
-          valB = b.lokacija?.ime || '';
+        } else if (sortKey === 'ime_firme') {
+          valA = a.ime_firme || '';
+          valB = b.ime_firme || '';
         }
 
         if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
@@ -119,7 +128,7 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
 
     // Filtriranje po statusu
     if (statusFilter === 'nije_potvrdjen') {
-      statusOk = event.potvrdio === 0 && !event.otkazano;
+      statusOk = event.potvrdio === null && !event.otkazano;
     } else if (statusFilter === 'potvrdjen') {
       statusOk = event.potvrdio !== 0 && !event.otkazano;
     } else if (statusFilter === 'otkazan') {
@@ -192,11 +201,11 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
             Lokacija:
             <select value={lokacijaFilter} onChange={e => setLokacijaFilter(e.target.value)}>
               <option value="">Sve</option>
-              {[...new Set(desavanjaData.map(d => d.ime_firme))]
+              {Array.isArray(desavanjaData) && [...new Set(desavanjaData.map(d => d.ime_firme))]
                 .filter(id => id !== null && id !== undefined)
                 .map(id => (
                   <option key={id} value={id}>
-                    {desavanjaData.find(d => d.ime_firme === id)?.lokacija?.ime || `ID ${id}`}
+                    {id}
                   </option>
                 ))}
             </select>
@@ -254,8 +263,8 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
           <thead>
             <tr>
               {rola === "1" && (
-                <th onClick={() => handleSort('lokacija')}>
-                  Lokacija{sortKey === 'lokacija' && (sortOrder === 'asc' ? '▲' : '▼')}
+                <th onClick={() => handleSort('ime_firme')}>
+                  Lokacija{sortKey === 'ime_firme' && (sortOrder === 'asc' ? '▲' : '▼')}
                 </th>
               )}
               <th onClick={() => handleSort('created_at')}>
@@ -271,7 +280,7 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
                 Vreme{sortKey === 'vreme_rezervacije' && (sortOrder === 'asc' ? '▲' : '▼')}
               </th>
               <th style={{cursor:'default'}}>
-                Usluga{sortKey === 'duzina_termina' && (sortOrder === 'asc' ? '▲' : '▼')}
+                Usluga{sortKey === 'cenovnik' && (sortOrder === 'asc' ? '▲' : '▼')}
               </th>
               <th style={{cursor:'default'}}>
                 Telefon{sortKey === 'telefon' && (sortOrder === 'asc' ? '▲' : '▼')}
@@ -287,27 +296,31 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
             {filtriranaDesavanja.map((event, idx) => (
               <tr key={idx} style={{cursor:'pointer'}} onClick={() => izmeniTermin(event)}>
                 {rola === "1" && (
-                  <td>{event.lokacija.ime}</td>
+                  <td>{event.ime_firme || '-'}</td>
                 )}
-                <td>{formatirajTimestamp(event.created_at)}</td>
-                <td>{event.ime}</td>
-                <td>{formatirajDatum(event.datum)}</td>
-                <td>{event.vreme_rezervacije}</td>
-                <td>{event.usluga.usluga}</td>
+                <td>{formatirajTimestamp(event.created_at) || formatirajTimestamp(event.datum_rezervacije)}</td>
+                <td>{event.ime || '-'}</td>
+                <td>{formatirajDatum(event.datum || event.datum_rezervacije)}</td>
+                <td>{event.vreme_rezervacije || '-'}</td>
+                <td>{event.usluga?.usluga || '-'}</td>
                 <td>
-                  <a href={`tel:${event.telefon}`} style={{ color: "#3b82f6" }}>
-                    {event.telefon}
-                  </a>
+                  {event.telefon ? (
+                    <a href={`tel:${event.telefon}`} style={{ color: "#3b82f6" }}>
+                      {event.telefon}
+                    </a>
+                  ) : '-'}
                 </td>
                 <td>
-                  <a href={`mailto:${event.email}`} style={{ color: "#3b82f6" }}>
-                    {event.email}
-                  </a>
+                  {event.email ? (
+                    <a href={`mailto:${event.email}`} style={{ color: "#3b82f6" }}>
+                      {event.email}
+                    </a>
+                  ) : '-'}
                 </td>
                 <td>
                   {event.otkazano ? (
                     <p style={{color: 'red'}}>Termin je otkazan.</p>
-                  ) : event.potvrdio === 0 ? (
+                  ) : event.potvrdio === null || event.potvrdio === null ? (
                     <button
                       className={styles.btn}
                       onClick={e => {
@@ -318,7 +331,7 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
                       Potvrdi
                     </button>
                   ) : (
-                    <p><strong>Potvrdio: </strong>{event.potvrdio_user?.username || "Nepoznato"}</p>
+                    <p><strong>Potvrdio: </strong>{event.potvrdio_user?.username || `ID ${event.potvrdio}`}</p>
                   )}
                 </td>
               </tr>

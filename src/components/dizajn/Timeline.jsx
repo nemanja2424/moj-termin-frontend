@@ -51,7 +51,7 @@ export default function TimelineDesign({
   );
 
   const getAvailableServices = () => {
-    return selectedLokacija?.duzina_termina || [];
+    return selectedLokacija?.cenovnik || [];
   };
 
   const selectedService = (typeof formData.usluga === 'object' && formData.usluga) 
@@ -116,7 +116,7 @@ export default function TimelineDesign({
       const overlapCount = zauzeti.filter(z => {
         const vremeRez = z.vreme_rezervacije.replace(/h$/, '').replace(/\s+/g, '').trim();
         const zStart = getDateForTime(date, vremeRez);
-        const zDur = parseDuration(z.duzina_termina);
+        const zDur = parseDuration(z.cenovnik);
         return isOverlap(current, trajanjeMin, zStart, zDur);
       }).length;
 

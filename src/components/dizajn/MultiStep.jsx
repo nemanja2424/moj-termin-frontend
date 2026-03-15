@@ -71,7 +71,7 @@ export default function MultiStepDesign({
   );
 
   const getAvailableServices = () => {
-    return selectedLokacija?.duzina_termina || [];
+    return selectedLokacija?.cenovnik || [];
   };
 
   const selectedService = (typeof formData.usluga === 'object' && formData.usluga) 
@@ -136,7 +136,7 @@ export default function MultiStepDesign({
       const overlapCount = zauzeti.filter(z => {
         const vremeRez = z.vreme_rezervacije.replace(/h$/, '').replace(/\s+/g, '').trim();
         const zStart = getDateForTime(date, vremeRez);
-        const zDur = parseDuration(z.duzina_termina);
+        const zDur = parseDuration(z.cenovnik);
         return isOverlap(current, trajanjeMin, zStart, zDur);
       }).length;
 
@@ -538,7 +538,7 @@ export default function MultiStepDesign({
                       </>
                     )}
                   </button>
-                  {tipUlaska === 3 && formData.potvrdio === 0 && (
+                  {tipUlaska === 3 && formData.potvrdio === null && (
                     <button onClick={(e) => {e.preventDefault; potvrdiTermin(formData);}} className={`${styles.btn} ${styles.btnInfo}`} type='button'>
                       {loadingSpinPotvrda ? (
                         <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>

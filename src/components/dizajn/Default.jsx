@@ -67,9 +67,10 @@ export default function DefaultDesign({
     (lok) => String(lok.id) === String(formData.lokacija)
   );
 
-  // Pribavi usluge iz lokacije (cenovnik - duzina_termina)
   const getAvailableServices = () => {
-    return selectedLokacija?.duzina_termina || [];
+    console.log(selectedLokacija)
+    const cenovnik = selectedLokacija?.cenovnik;
+    return Array.isArray(cenovnik) ? cenovnik : [];
   };
 
   // Pronađi selektovanu uslugu
@@ -142,7 +143,7 @@ export default function DefaultDesign({
       const overlapCount = zauzeti.filter(z => {
         const vremeRez = z.vreme_rezervacije.replace(/h$/, '').replace(/\s+/g, '').trim();
         const zStart = getDateForTime(date, vremeRez);
-        const zDur = parseDuration(z.duzina_termina);
+        const zDur = parseDuration(z.cenovnik);
         return isOverlap(current, trajanjeMin, zStart, zDur);
       }).length;
 
@@ -307,11 +308,12 @@ export default function DefaultDesign({
               <label>Usluga</label>
               <select
                 name="usluga"
-                value={getAvailableServices().findIndex(srv => 
-                  typeof formData.usluga === 'object' 
+                value={getAvailableServices().findIndex(srv => {
+                  if (!srv || !formData.usluga) return false;
+                  return typeof formData.usluga === 'object' 
                     ? srv.usluga === formData.usluga.usluga 
-                    : srv.usluga === formData.usluga
-                )}
+                    : srv.usluga === formData.usluga;
+                })}
                 onChange={handleUslugaChange}
                 required
               >
@@ -499,7 +501,7 @@ export default function DefaultDesign({
                       </>
                     )}
                 </button>
-                {tipUlaska === 3 && formData.potvrdio === 0 && (
+                {tipUlaska === 3 && formData.potvrdio === null && (
                   <button onClick={(e) => {e.preventDefault; potvrdiTermin(formData);}} className={styles.submitBtn} type='button'>
                     {loadingSpinPotvrda ? (
                       <div style={{maxHeight:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>

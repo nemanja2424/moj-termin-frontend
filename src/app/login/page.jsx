@@ -45,7 +45,7 @@ const LoginContent = () => {
     
     setLoading(true);
     try {
-      const res = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/auth/login', {
+      const res = await fetch('http://127.0.0.1:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -66,6 +66,7 @@ const LoginContent = () => {
         } 
         else {
           setEmailError(false);
+          toast.error("Greška pri prijavljivanju.");
         }
         throw new Error(data.message);
       }
@@ -129,7 +130,7 @@ const LoginContent = () => {
       "telefon": true,
       "datum": true,
       "vreme": true,
-      "trajanje": true,
+      "cenovnik": true,
       "lokacija": true,
       "opis": true,
       "nazivFirme": true,
@@ -148,7 +149,7 @@ const LoginContent = () => {
       "wen": "08:00-16:00"
     }
 
-    const trajanje = [
+    const cenovnik = [
       {
         "cena": 1000,
         "usluga": "Moja usluga",
@@ -183,12 +184,12 @@ const LoginContent = () => {
     setLoading(true)
   
     try {
-      const res = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/auth/signup', {
+      const res = await fetch('http://127.0.0.1:5000/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ regEmail, regPass, ime, brTel, forma, radnoVreme, trajanje, ai_info, paket_limits })
+        body: JSON.stringify({ regEmail, regPass, ime, brTel, forma, radnoVreme, cenovnik, ai_info, paket_limits })
       });
   
       const data = await res.json();
@@ -203,8 +204,13 @@ const LoginContent = () => {
       localStorage.setItem('rola', 1);
       window.location.href = '/panel';  
     } catch (error) {
+      if (error.title === "dupliran mejl") {
+        toast.error(error.message)
+      }
+      else {
+        toast.error('Došlo je do greške. Pokušajte ponovo.');
+      }
       console.error(error);
-      toast.error('Došlo je do greške. Pokušajte ponovo.');
     } finally { setLoading(false) }
   };
   const isValidEmail = (email) => {

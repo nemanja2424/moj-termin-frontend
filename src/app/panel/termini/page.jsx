@@ -27,7 +27,7 @@ export default function PanelPage() {
 
     try {
       setLoading(true);
-      const response = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/zakazivanja/${userId}`, {
+      const response = await fetch(`http://127.0.0.1:5000/api/zakazivanja/${userId}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -35,7 +35,7 @@ export default function PanelPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        if (data && data.code === "ERROR_CODE_UNAUTHORIZED") {
+        if (data && data.msg === "Token has expired") {
           logout();
           return;
         }

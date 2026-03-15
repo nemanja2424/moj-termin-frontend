@@ -86,7 +86,7 @@ export default function PodesavanjaPage() {
     const [odabranaFirma, setOdabranaFirma] = useState({});
     const [showTT, setShowTT] = useState("");
     const trajanja = ["30 min", "1 h", "1 h 30 min", "2 h", "3 h"];
-    const [izabranaTrajanja, setIzabranaTrajanja] = useState([]);
+    const [cenovnik, setcenovnik] = useState([]);
 
     // TT - Cenovnik varijable
     const [novaUsluga_cena, setNovaUsluga_cena] = useState('');
@@ -124,7 +124,7 @@ export default function PodesavanjaPage() {
         setLoadingPotvrdi(true);
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/podesavanja/user/${userId}`, {
+        const res = await fetch(`http://127.0.0.1:5000/api/podesavanja/user/${userId}`, {
             method: 'PATCH',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
@@ -136,7 +136,7 @@ export default function PodesavanjaPage() {
 
         setLoadingPotvrdi(false);
         if (!res.ok) {
-            toast.error(data.message || 'Greška prilikom registracije.');
+            toast.error(data.message || 'Greška prilikom promene podataka.');
             return;
         }
         toast.success("Uspešno ste promenili podatke.");
@@ -161,8 +161,8 @@ export default function PodesavanjaPage() {
         }
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/podesavanja/nova-lozinka/${userId}`, {
-            method: 'POST',
+        const res = await fetch(`http://127.0.0.1:5000/api/podesavanja/nova-lozinka/${userId}`, {
+            method: 'PATCH',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
                 'Content-Type': 'application/json'
@@ -176,7 +176,7 @@ export default function PodesavanjaPage() {
                 return;
             }
             else {
-                toast.error(data.message || 'Greška prilikom registracije.');
+                toast.error(data.message || 'Greška prilikom promene lozinke.');
                 return;
             }
         }
@@ -188,21 +188,21 @@ export default function PodesavanjaPage() {
         setLoadingLokacija(true);
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
-        const trajanje = korisnik.trajanje; 
-        const radnoVreme = korisnik.radnoVreme;
-        const res = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/podesavanja/dodaj-lokaciju/${userId}`, {
+        const cenovnik = korisnik.cenovnik || []; 
+        const radno_vreme = korisnik.radnoVreme || {};
+        const res = await fetch(`http://127.0.0.1:5000/api/podesavanja/dodaj-lokaciju/${userId}`, {
             method:'POST',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({imeLokacije, adresa, trajanje, radnoVreme })
+            body: JSON.stringify({imeLokacije, adresa, cenovnik, radno_vreme })
         });
         const data = await res.json();
 
         setLoadingLokacija(false);
         if (!res.ok){
-            toast.error(data.message || 'Greška prilikom registracije.');
+            toast.error(data.message || 'Greška prilikom dodavanja lokacije.');
             return;
         }
         fetchData();
@@ -214,7 +214,7 @@ export default function PodesavanjaPage() {
     const handleConfirmEdit = async (firmaId) => {
         setLoadingPotvrdi(true);
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/podesavanja/izmeni-lokaciju/${firmaId}`, {
+        const res = await fetch(`http://127.0.0.1:5000/api/podesavanja/izmeni-lokaciju/${firmaId}`, {
         method:'PATCH',
         headers:{
             'Authorization': `Bearer ${authToken}`,
@@ -230,7 +230,7 @@ export default function PodesavanjaPage() {
         toast.error(data.message);
         return;
     }
-    setPreduzeca(data);
+    fetchData();
     toast.success("Uspešno izmenili podatke lokacije.")
     setEditFirmaId(null);
     setEditedFirmData({});
@@ -324,7 +324,7 @@ export default function PodesavanjaPage() {
 
     const fetchData = async () => {
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/auth/me', {
+        const res = await fetch('http://127.0.0.1:5000/api/auth/me', {
             method: 'GET',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
@@ -333,7 +333,7 @@ export default function PodesavanjaPage() {
         });
         const data = await res.json();
         if (!res.ok) {
-            if (data && data.code === "ERROR_CODE_UNAUTHORIZED") {
+            if (data && data.msg === "Token has expired") {
                 logout();
                 return;
             }
@@ -446,7 +446,7 @@ export default function PodesavanjaPage() {
         const authToken = localStorage.getItem('authToken');
 
         try{
-            const response = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/podesavanja/radno-vreme`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/podesavanja/radno-vreme`, {
                 method: 'PATCH',
                 headers:{
                     'Authorization': `Bearer ${authToken}`,
@@ -460,12 +460,11 @@ export default function PodesavanjaPage() {
             });
             const data = await response.json();
             if (!response.ok) {
-                toast.error(data.message || 'Greška prilikom izmene.');
+                toast.error('Greška prilikom izmene.');
                 return;
             }
             toast.success("Uspešno ste promenili radno vreme.");
-            setKorisnik(data.korisnik);
-            setPreduzeca(data.preduzeca);
+            fetchData();
             setShowRadnoVreme("");
 
         } catch (error) {
@@ -479,10 +478,10 @@ export default function PodesavanjaPage() {
     const prikaziTT = (tip) => {
         if (tip === 'default') {
             setShowTT("Podrazumevano trajanje termina");
-            setIzabranaTrajanja(Array.isArray(korisnik.trajanje) ? korisnik.trajanje : []);
+            setcenovnik(Array.isArray(korisnik.cenovnik) ? korisnik.cenovnik : []);
         } else {
             setShowTT(`Trajanje termina za ${tip.ime}`);
-            setIzabranaTrajanja(Array.isArray(tip.duzina_termina) ? tip.duzina_termina : []);
+            setcenovnik(Array.isArray(tip.cenovnik) ? tip.cenovnik : []);
             setOdabranaFirma(tip);
         }
         // Resetuj obrasca za novu uslugu
@@ -511,13 +510,13 @@ export default function PodesavanjaPage() {
             trajanje_prikaz: novaUsluga_trajanje_prikaz
         };
 
-        setIzabranaTrajanja(prev => [...prev, novaUsluga]);
+        setcenovnik(prev => [...prev, novaUsluga]);
         resetujFormularUsluge();
         toast.success('Usluga dodana!');
     };
 
     const handleDeleteService = (index) => {
-        setIzabranaTrajanja(prev => prev.filter((_, i) => i !== index));
+        setcenovnik(prev => prev.filter((_, i) => i !== index));
         toast.success('Usluga obrisana!');
     };
 
@@ -537,9 +536,9 @@ export default function PodesavanjaPage() {
             return;
         }
 
-        const updatedServices = [...izabranaTrajanja];
+        const updatedServices = [...cenovnik];
         updatedServices[index] = editingServiceData;
-        setIzabranaTrajanja(updatedServices);
+        setcenovnik(updatedServices);
         setEditingServiceId(null);
         setEditingServiceData({});
         toast.success('Usluga ažurirana!');
@@ -547,7 +546,7 @@ export default function PodesavanjaPage() {
     const handlePromeniTT = async(e) => {
         e.preventDefault();
         setLoadingTT(true);
-        if (!Array.isArray(izabranaTrajanja) || izabranaTrajanja.length === 0) {
+        if (!Array.isArray(cenovnik) || cenovnik.length === 0) {
             toast.error("Morate dodati makar jednu uslugu.");
             setLoadingTT(false);
             return;
@@ -556,7 +555,7 @@ export default function PodesavanjaPage() {
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
         try{
-            const response = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/podesavanja/duzina-termina`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/podesavanja/cenovnik`, {
                 method: 'PATCH',
                 headers:{
                     'Authorization': `Bearer ${authToken}`,
@@ -564,7 +563,7 @@ export default function PodesavanjaPage() {
                 },
                 body: JSON.stringify({
                     tip,
-                    termini: izabranaTrajanja,
+                    cenovnik: cenovnik,
                     userId
                 })
             });
@@ -574,8 +573,7 @@ export default function PodesavanjaPage() {
                 return;
             }
             toast.success("Uspešno ste promenili cenovnik.");
-            setKorisnik(data.korisnik);
-            setPreduzeca(data.preduzeca);
+            fetchData();
             setShowTT("");
         } catch (error) {
             console.log(error);
@@ -961,19 +959,22 @@ export default function PodesavanjaPage() {
         {showDodajLokaciju && (
             <div>
                 <div className={styles.blur}></div>
-                <div className={styles.dodajKorisnika} style={{height:'280px'}}>
+                <div className={styles.dodajKorisnika} style={{height:'auto', minHeight:'300px'}}>
                     <div className={stylesLogin.zatamniLogin} style={{zIndex:'-1'}}></div>
                     <form onSubmit={handleDodajLokaciju} className={styles.forma}>
                         <h2 style={{marginBottom:'15px'}} >Dodaj lokaciju</h2>
                         <div className={stylesLogin.formGroup}>
                             <input type='text' value={imeLokacije} onChange={(e) => { setImeLokacije(e.target.value) }}
-                                className={stylesLogin.formStyle} placeholder='Ime lokacije' />
+                                className={stylesLogin.formStyle} placeholder='Ime lokacije' required />
                             <i className={`${stylesLogin.inputIcon} uil uil-building`}></i>
                         </div>
                         <div className={stylesLogin.formGroup}>
                             <input type='text' value={adresa} onChange={(e) => { setAdresa(e.target.value) }}
-                                className={stylesLogin.formStyle} placeholder='Adresa' />
+                                className={stylesLogin.formStyle} placeholder='Adresa' required />
                             <i className={`${stylesLogin.inputIcon} fa-solid fa-location-dot`} style={{ transform: 'translateY(-25%)' }}></i>
+                        </div>
+                        <div style={{fontSize:'13px', color:'#666', backgroundColor:'#f5f5f5', padding:'10px', borderRadius:'4px', marginBottom:'15px'}}>
+                            <strong>Napomena:</strong> Nova lokacija će preuzeti vaš podrazumevani cenovnik i radno vreme. Možete ih kasnije izmeniti kroz dugme "Cenovnik" i "Radno vreme" za ovu lokaciju.
                         </div>
                         <button type='submit' className={styles.btn2} disabled={loadingLokacija}>
                             {loadingLokacija ? <div className="spinnerMali"></div> : 'Dodaj lokaciju'}
@@ -1094,10 +1095,10 @@ export default function PodesavanjaPage() {
 
                             {/* Prikaz postojećih usluga */}
                             <div className={styles.cenovnikUsluge}>
-                                <h3>Usluge ({Array.isArray(izabranaTrajanja) ? izabranaTrajanja.length : 0})</h3>
-                                {Array.isArray(izabranaTrajanja) && izabranaTrajanja.length > 0 ? (
+                                <h3>Usluge ({Array.isArray(cenovnik) ? cenovnik.length : 0})</h3>
+                                {Array.isArray(cenovnik) && cenovnik.length > 0 ? (
                                     <div style={{display:'flex', flexDirection:'column', gap:'15px'}}>
-                                        {izabranaTrajanja.map((usluga, index) => (
+                                        {cenovnik.map((usluga, index) => (
                                             <div
                                                 key={index}
                                                 className={`${styles.cenovnikUsluga} ${editingServiceId === index ? styles.cenovnikUslugaEditMode : ''}`}

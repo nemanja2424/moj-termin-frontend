@@ -219,7 +219,7 @@ export default function Kalendar({ desavanjaData, fetchData, loading }) {
                   </p>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
-                  {event.potvrdio === 0 ? (
+                  {event.potvrdio === null ? (
                     <button onClick={() => potvrdiTermin(event)} className={styles.btn}>Potvrdi termin</button>
                   ) : null}
                   <a

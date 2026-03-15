@@ -39,7 +39,7 @@ export default function DashboardPage() {
 
     try {
       const response = await fetch(
-        `https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/auth/me/${userId}`,
+        `http://127.0.0.1:5000/api/auth/me/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -49,7 +49,7 @@ export default function DashboardPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        if (data && data.code === "ERROR_CODE_UNAUTHORIZED") {
+        if (data && data.msg === "Token has expired") {
           logout();
           return;
         }
@@ -59,8 +59,17 @@ export default function DashboardPage() {
 
       const kombinovaniTermini = data.zakazano.flat().map(item => ({
         ...item,
-        datum: item.datum_rezervacije, // Dodaj polje datum
+        datum: item.datum_rezervacije,
         potvrdio_user: item.potvrdio_user || {},
+        potvrdio: item.potvrdio || 0,
+        otkazano: item.otkazano || false,
+        ime_firme: item.ime_firme || '',
+        ime: item.ime || '',
+        telefon: item.telefon || '',
+        email: item.email || '',
+        vreme_rezervacije: item.vreme_rezervacije || '',
+        usluga: item.usluga || { usluga: '' },
+        created_at: item.created_at || item.datum_rezervacije,
       }));
 
       kombinovaniTermini.sort((a, b) => b.id - a.id);
@@ -200,7 +209,7 @@ export default function DashboardPage() {
     });
   }, [sviTermini]);
   const brojNepotvrdjenih = useMemo(() => {
-    return sviTermini.filter(termin => termin.potvrdio === 0).length;
+    return sviTermini.filter(termin => termin.potvrdio === null).length;
   }, [sviTermini]);
   const prosecnoTerminaDnevno = useMemo(() => {
     const danas = new Date();

@@ -26,7 +26,7 @@ export default function AiInfoPage() {
       try {
         // Fetch AI info iz Xano
         const aiInfoResponse = await fetch(
-            `https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/ai/info/${userId}`,
+            `http://127.0.0.1:5000/api/ai/info/${userId}`,
             {
             headers: {
                 Authorization: `Bearer ${authToken}`,
@@ -82,7 +82,7 @@ export default function AiInfoPage() {
       };
 
       const response = await fetch(
-        `https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/ai/info/${userId}`,
+        `http://127.0.0.1:5000/api/ai/info/${userId}`,
         {
           method: "PATCH",
           headers: { 

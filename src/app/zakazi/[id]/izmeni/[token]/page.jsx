@@ -37,7 +37,7 @@ export default function IzmeniZakaziPage() {
     
 
     const fetchData = async () => {
-        const res = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/zakazi/${id}/izmena/${token}`);
+        const res = await fetch(`http://127.0.0.1:5000/api/zakazi/${id}/izmena/${token}`);
         if (!res.ok) {
             if (res.status === 404) {
                 toast.error('Termin ne postoji.');
@@ -58,7 +58,7 @@ export default function IzmeniZakaziPage() {
             termin.mesec = Number(mesec) - 1; // mesec je 0-indeksiran u JS
             termin.dan = Number(dan);
         }
-        if (termin.duzina_termina) {termin.trajanje = termin.duzina_termina}
+        if (termin.cenovnik) {termin.trajanje = termin.cenovnik}
         if(termin.vreme_rezervacije) {termin.vreme = termin.vreme_rezervacije}
         if(termin.ime_firme) {termin.lokacija = termin.ime_firme}
         
@@ -67,12 +67,12 @@ export default function IzmeniZakaziPage() {
           const lokacija = data.preduzece.lokacije.find(
             (lok) => String(lok.id) === String(termin.lokacija) || lok.ime === termin.lokacija
           );
-          if (lokacija && lokacija.duzina_termina && termin.duzina_termina) {
-            const uslugeNiz = lokacija.duzina_termina;
+          if (lokacija && lokacija.cenovnik && termin.cenovnik) {
+            const uslugeNiz = lokacija.cenovnik;
             const pronadenoObjekt = uslugeNiz.find(srv => 
-              srv.usluga === termin.duzina_termina || 
-              srv.trajanje === termin.duzina_termina ||
-              `${srv.usluga} - ${srv.trajanje_prikaz}` === termin.duzina_termina
+              srv.usluga === termin.cenovnik || 
+              srv.trajanje === termin.cenovnik ||
+              `${srv.usluga} - ${srv.trajanje_prikaz}` === termin.cenovnik
             );
             if (pronadenoObjekt) {
               termin.usluga = pronadenoObjekt;
@@ -134,8 +134,8 @@ export default function IzmeniZakaziPage() {
             datum_rezervacije: odabranDatum,
         };
         const url = localhost
-        ? 'http://127.0.0.1:5000/api/zakazi/otkazi'
-        : 'http://127.0.0.1:5000/api/zakazi/otkazi';
+        ? 'http://127.0.0.1:5000/api/otkazi'
+        : 'http://127.0.0.1:5000/api/otkazi';
 
         setLoadingSpinOtkaz(true);
         try {
@@ -154,6 +154,7 @@ export default function IzmeniZakaziPage() {
         }
         
         toast.success('Uspešno ste otkazali termin.');
+        fetchData();
         } catch (error) {
             console.log(error);
         } finally {

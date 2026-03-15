@@ -32,7 +32,7 @@ export default function ZakaziPage() {
     const [resetMultiStep, setResetMultiStep] = useState(false);
 
     const fetchData = async () => {
-        const res = await fetch(`https://x8ki-letl-twmt.n7.xano.io/api:YgSxZfYk/zakazi/${id}/forma`);
+        const res = await fetch(`http://127.0.0.1:5000/api/zakazi/${id}/forma`);
         if (!res.ok) {
             toast.error('Greška prilikom učitavanja podataka');
             console.log(res);
@@ -88,7 +88,7 @@ export default function ZakaziPage() {
     };
 
     const handleSubmit = async (e) => {
-        let userId = localStorage.getItem('userId') || "0"; // za potvrdio, ako postoji
+        let userId = localStorage.getItem('userId') || null; // za potvrdio, ako postoji
         e.preventDefault();
         setLoadingSpin(true);
 

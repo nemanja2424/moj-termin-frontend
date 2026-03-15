@@ -109,7 +109,7 @@ export default function MinimalDesign({
   );
 
   const getAvailableServices = () => {
-    return selectedLokacija?.duzina_termina || [];
+    return selectedLokacija?.cenovnik || [];
   };
 
   // Prikaz vremena samo ako postoji i nije prazan string
@@ -190,7 +190,7 @@ export default function MinimalDesign({
       const overlap = zauzeti.some(z => {
         const vremeRez = z.vreme_rezervacije.replace(/h$/, '').replace(/\s+/g, '').trim();
         const zStart = getDateForTime(selectedDate, vremeRez);
-        const zDur = parseDuration(z.duzina_termina);
+        const zDur = parseDuration(z.cenovnik);
         return isOverlap(current, trajanjeMin, zStart, zDur);
       });
 
@@ -408,7 +408,7 @@ export default function MinimalDesign({
                       </>
                     )}
                 </button>
-                {tipUlaska === 3 && formData.potvrdio === 0 && (
+                {tipUlaska === 3 && formData.potvrdio === null && (
                   <button onClick={(e) => {e.preventDefault; potvrdiTermin(formData);}} className={styles.submitBtn} type='button'>
                     {loadingSpinPotvrda ? (
                       <div style={{maxHeight:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>
