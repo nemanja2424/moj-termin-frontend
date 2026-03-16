@@ -27,7 +27,7 @@ export default function PanelPage() {
 
     try {
       setLoading(true);
-      const response = await fetch(`https://test.mojtermin.site/api/zakazivanja/${userId}`, {
+      const response = await fetch(`https://mojtermin.site/api/zakazivanja/${userId}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },

@@ -221,7 +221,7 @@ export default function DefaultDesign({
       <header className={styles.header}>
         <div className={styles.brandFirme}>
           {forma.logoFirme === true && 
-            <img loading='lazy' className={styles.logo} src={preduzece.putanja_za_logo === '/Images/logo.webp' ? '/Images/logo.webp' : `https://test.mojtermin.site/api/logo/${preduzece.putanja_za_logo}`} />
+            <img loading='lazy' className={styles.logo} src={preduzece.putanja_za_logo === '/Images/logo.webp' ? '/Images/logo.webp' : `https://mojtermin.site/api/logo/${preduzece.putanja_za_logo}`} />
           }
           {forma.nazivFirme === true && (
             <h2>{preduzece.ime_preduzeca}</h2>
