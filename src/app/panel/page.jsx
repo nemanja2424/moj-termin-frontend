@@ -61,7 +61,7 @@ export default function DashboardPage() {
         ...item,
         datum: item.datum_rezervacije,
         potvrdio_user: item.potvrdio_user || {},
-        potvrdio: item.potvrdio || 0,
+        potvrdio: item.potvrdio || null,
         otkazano: item.otkazano || false,
         ime_firme: item.ime_firme || '',
         ime: item.ime || '',
@@ -292,7 +292,7 @@ export default function DashboardPage() {
         <div className={styles.sekcija30}>
           <div className={`${styles.stavka2}`}>
             <div className={styles.logoDiv}>
-              <img loading='lazy' src={vlasnik.putanja_za_logo === '' ? '/Images/logo.webp' : `https://test.mojtermin.site/api/logo/${vlasnik.putanja_za_logo}`} />
+              <img loading='lazy' src={vlasnik.putanja_za_logo === '/Images/logo.webp' ? '/Images/logo.webp' : `https://test.mojtermin.site/api/logo/${vlasnik.putanja_za_logo}`} />
             </div>
             <div>
               <h2>{vlasnik?.ime_preduzeca || "Preduzece"}</h2>

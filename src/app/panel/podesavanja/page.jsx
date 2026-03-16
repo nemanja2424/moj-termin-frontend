@@ -783,7 +783,7 @@ export default function PodesavanjaPage() {
                     <button onClick={handleButtonClickLogo} className={styles.btn} style={{width:'120px', textAlign:'center'}}>Izmeni logo</button>
                     <input type="file" accept="image/*" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} />
                 </div>
-                <img loading='lazy' src={korisnik.putanja_za_logo === '' ? '/Images/logo.webp' : `https://test.mojtermin.site/api/logo/${korisnik.putanja_za_logo}`} />
+                <img loading='lazy' src={korisnik.putanja_za_logo === '/Images/logo.webp' ? '/Images/logo.webp' : `https://test.mojtermin.site/api/logo/${korisnik.putanja_za_logo}`} />
             </div>
             <div className={`${styles.stavka} ${styles.firme}`} style={{flexDirection:'column', alignItems:'center'}}>
                 <h2>Moje lokacije</h2>
@@ -934,7 +934,7 @@ export default function PodesavanjaPage() {
                             <input type={showCurrentPass ? 'text' : 'password'} value={currentPass} onChange={(e) => { setCurrentPass(e.target.value) }}
                                 className={stylesLogin.formStyle} placeholder='Trenutna lozinka' />
                             <i className={`${stylesLogin.inputIcon} uil uil-lock`}></i>
-                            <i className={`fa-solid ${showRegPass ? 'fa-eye-slash' : 'fa-eye'} ${stylesLogin.oko}`} onClick={() => setShowRegPass(prev => !prev)}></i>
+                            <i className={`fa-solid ${showCurrentPass ? 'fa-eye-slash' : 'fa-eye'} ${stylesLogin.oko}`} onClick={() => setShowCurrentPass(prev => !prev)}></i>
                         </div>
                         <div className={stylesLogin.formGroup}>
                             <input type={showRegPass ? 'text' : 'password'} value={newPass} onChange={(e) => { setNewPass(e.target.value) }}
