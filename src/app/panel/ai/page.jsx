@@ -416,7 +416,13 @@ export default function StatistikaPage() {
         if (!authToken || !userId) return;
 
         const response = await fetch(
-          `https://mojtermin.site/api/chats?userId=${userId}&authToken=${authToken}`
+          `https://mojtermin.site/api/chats?userId=${userId}&authToken=${authToken}`,
+          {
+            headers: {
+            'Authorization': `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+          }
         );
 
         if (response.ok) {
@@ -448,7 +454,13 @@ export default function StatistikaPage() {
 
       setChatLoading(true);
       const response = await fetch(
-        `https://mojtermin.site/api/chat/${chatId}?userId=${userId}&authToken=${authToken}`
+        `https://mojtermin.site/api/chat/${chatId}?userId=${userId}&authToken=${authToken}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       if (response.ok) {
@@ -483,6 +495,7 @@ export default function StatistikaPage() {
       const response = await fetch("https://mojtermin.site/api/chat/create", {
         method: "POST",
         headers: {
+          'Authorization': `Bearer ${authToken}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -566,6 +579,7 @@ export default function StatistikaPage() {
         {
           method: "DELETE",
           headers: {
+            'Authorization': `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -609,6 +623,7 @@ export default function StatistikaPage() {
         {
           method: "PATCH",
           headers: {
+            'Authorization': `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -712,6 +727,7 @@ export default function StatistikaPage() {
         {
           method: mapper.method,
           headers: {
+            'Authorization': `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
@@ -743,6 +759,7 @@ export default function StatistikaPage() {
           await fetch(`https://mojtermin.site/api/chat/${currentChatId}/message`, {
             method: "POST",
             headers: {
+              'Authorization': `Bearer ${authToken}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -776,6 +793,7 @@ export default function StatistikaPage() {
           await fetch(`https://mojtermin.site/api/chat/${currentChatId}/message`, {
             method: "POST",
             headers: {
+              'Authorization': `Bearer ${authToken}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -843,6 +861,7 @@ export default function StatistikaPage() {
         await fetch(`https://mojtermin.site/api/chat/${currentChatId}/message`, {
           method: "POST",
           headers: {
+            'Authorization': `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -892,6 +911,7 @@ export default function StatistikaPage() {
         const createResponse = await fetch("https://mojtermin.site/api/chat/create", {
           method: "POST",
           headers: {
+            'Authorization': `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -947,6 +967,7 @@ export default function StatistikaPage() {
       await fetch(`https://mojtermin.site/api/chat/${chatId}/message`, {
         method: "POST",
         headers: {
+          'Authorization': `Bearer ${authToken}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -979,6 +1000,7 @@ export default function StatistikaPage() {
           const response = await fetch("https://mojtermin.site/api/askAI", {
             method: "POST",
             headers: {
+              'Authorization': `Bearer ${authToken}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -1028,6 +1050,7 @@ export default function StatistikaPage() {
         await fetch(`https://mojtermin.site/api/chat/${chatId}/message`, {
           method: "POST",
           headers: {
+            'Authorization': `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({

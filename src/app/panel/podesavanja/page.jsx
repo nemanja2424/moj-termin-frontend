@@ -251,12 +251,13 @@ export default function PodesavanjaPage() {
     
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('id', userId);
-        formData.append('authToken', authToken);
     
         try {
             const response = await fetch('https://mojtermin.site/api/novi_logo', {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                },
                 body: formData,
             });
     
