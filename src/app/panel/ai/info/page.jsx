@@ -26,7 +26,7 @@ export default function AiInfoPage() {
       try {
         // Fetch AI info iz Xano
         const aiInfoResponse = await fetch(
-            `https://mojtermin.site/api/ai/info/${userId}`,
+            `https://test.mojtermin.site/api/ai/info/${userId}`,
             {
             headers: {
                 Authorization: `Bearer ${authToken}`,
@@ -46,7 +46,7 @@ export default function AiInfoPage() {
 
         // Fetch dnevne podatke o korišćenju
         const today = new Date().toISOString().split("T")[0];
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://mojtermin.site';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://test.mojtermin.site';
         const dailyUsageResponse = await fetch(
           `${apiUrl}/api/aiUsage?owner_id=${userId}&date=${today}`
         );
@@ -82,7 +82,7 @@ export default function AiInfoPage() {
       };
 
       const response = await fetch(
-        `https://mojtermin.site/api/ai/info/${userId}`,
+        `https://test.mojtermin.site/api/ai/info/${userId}`,
         {
           method: "PATCH",
           headers: { 
