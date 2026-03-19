@@ -997,6 +997,7 @@ export default function StatistikaPage() {
       // Pozovi API
       const fetchAIResponse = async () => {
         try {
+          let tip = 1;
           const response = await fetch("https://test.mojtermin.site/api/askAI", {
             method: "POST",
             headers: {
@@ -1004,7 +1005,7 @@ export default function StatistikaPage() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              authToken,
+              tip,
               userId,
               pitanje: userInput,
               poruke: conversationHistory,

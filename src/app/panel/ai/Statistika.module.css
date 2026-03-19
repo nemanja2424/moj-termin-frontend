@@ -373,8 +373,8 @@
 }
 
 .markdown li {
-  margin: 4px 0;
-  line-height: 1.6;
+  margin: 2px 0;
+  line-height: 0;
 }
 
 .markdown a {
