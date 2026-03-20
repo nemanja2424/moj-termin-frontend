@@ -16,14 +16,14 @@ const daysOfWeek = ['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'];
 
 const today = new Date();
 
-export default function Kalendar({ desavanjaData, fetchData, loading }) {
+export default function Kalendar({ desavanjaData, fetchData, loading, vlasnikId }) {
   const [days, setDays] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDate, setSelectedDate] = useState(formatDate(today));
   const [selectedEvents, setSelectedEvents] = useState([]);
   const scrollRef = useRef(null);
-  const [rola, setRola] = useState(null); //1 = vlasnik; 2 = korisnik; Eventualno 3 = admin
+  const [rola, setRola] = useState(null); //1 = vlasnik; 2 = korisnik;
 
   const generateCalendar = (month, year) => {
     const firstDay = new Date(year, month, 1);
@@ -130,6 +130,7 @@ export default function Kalendar({ desavanjaData, fetchData, loading }) {
     // Update selectedEvents when desavanjaData or selectedDate changes
     const currentEvents = desavanjaData.filter((e) => e.datum === selectedDate && e.otkazano === false);
     setSelectedEvents(currentEvents);
+    console.log(vlasnikId)
   }, [desavanjaData, selectedDate]);
 
   const potvrdiTermin = async (termin) => {
@@ -223,7 +224,7 @@ export default function Kalendar({ desavanjaData, fetchData, loading }) {
                     <button onClick={() => potvrdiTermin(event)} className={styles.btn}>Potvrdi termin</button>
                   ) : null}
                   <a
-                    href={`/zakazi/${localStorage.getItem('userId')}/izmeni/${event.token}`}
+                    href={`/zakazi/${vlasnikId}/izmeni/${event.token}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

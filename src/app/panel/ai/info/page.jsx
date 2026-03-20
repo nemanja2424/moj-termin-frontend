@@ -40,7 +40,7 @@ export default function AiInfoPage() {
 
         const aiInfoData = await aiInfoResponse.json();
         setAiInfo(aiInfoData);
-        // Čita llm-switch iz ugježdene ai_info strukture
+        // Čita llm-switch iz ai_info objekta
         const llmSwitch = aiInfoData.ai_info?.["llm-switch"] || "default";
         setSelectedModel(llmSwitch);
 
@@ -158,10 +158,32 @@ export default function AiInfoPage() {
   // Ako nema paketa, korisnik je zaposlenik
   const isEmployee = !aiInfo.paket;
   
+  // Helper funkcija da filtrira modele sa limit > 0
+  const getActiveModels = (userLimits) => {
+    if (!userLimits) return {};
+    return Object.entries(userLimits)
+      .filter(([key, value]) => key !== "llm-switch" && value > 0)
+      .reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      }, {});
+  };
+
+  // Mapiranje imena modela sa srpskim naziva
+  const getModelLabel = (modelName) => {
+    const labels = {
+      "GPT-OSS20B": "GPT-OSS 20B",
+      "Mistral-24b": "Mistral 24B",
+      "Qwen-3.5": "Qwen 3.5",
+      "llama4": "Llama 4 Maverick"
+    };
+    return labels[modelName] || modelName;
+  };
+  
   const todayUsage = dailyUsage || {
-    owner: { llama3: 0, llama4: 0 },
-    employees: { llama3: 0, llama4: 0 },
-    bookings: { llama3: 0, llama4: 0 },
+    owner: {},
+    employees: {},
+    bookings: {},
   };
 
   return (
@@ -171,93 +193,99 @@ export default function AiInfoPage() {
         <h1>📊 AI ASISTENT STATUS</h1>
         <div className={styles.statusContent}>
           <div className={styles.statusItem}>
-            <span>Paket:</span>
-            <strong>{isEmployee ? "👨‍💼 Zaposlenik" : paket}</strong>
-          </div>
-          <div className={styles.statusItem}>
-            <span>Cool-down:</span>
-            <strong>0 sekundi</strong>
-          </div>
-          <div className={styles.statusItem}>
             <span>Status:</span>
             <strong className={styles.statusAvailable}>✅ DOSTUPNO</strong>
+          </div>
+
+          <div className={styles.statusItem}>
+            <span>Vreme:</span>
+            <strong>{new Date().toLocaleDateString("sr-RS")} {new Date().toLocaleTimeString("sr-RS")}</strong>
+          </div>
+
+          <div className={styles.statusItem}>
+            <span>AI verzija:</span>
+            <strong>MT 1.5 agent (beta)</strong>
           </div>
         </div>
       </div>
 
       {/* Dnevni Limit */}
-      <div className={styles.card}>
-        <h2>📅 DANAS</h2>
-
-        {isOwner && (
-          <>
-            {/* Vlasnik */}
+      {isOwner && (
+        <div className={styles.card}>
+          <h2>📅 OGRANIČENJA</h2>
+          {/* Vlasnik */}
+          {Object.keys(getActiveModels(limits.owner)).length > 0 ? (
             <div className={styles.userGroup}>
               <h4 className={styles.groupTitle}>👤 Vlasnik</h4>
-              <div className={styles.modelSection}>
-                <ProgressBar
-                  current={todayUsage.owner.llama3}
-                  limit={limits.owner.llama3}
-                  label="Osnovan model"
-                />
-              </div>
-              <div className={styles.modelSection}>
-                <ProgressBar
-                  current={todayUsage.owner.llama4}
-                  limit={limits.owner.llama4}
-                  label="Napredni model"
-                />
-              </div>
+              {Object.entries(getActiveModels(limits.owner)).map(([model, limit]) => (
+                <div key={model} className={styles.modelSection}>
+                  <ProgressBar
+                    current={todayUsage.owner?.[model] || 0}
+                    limit={limit}
+                    label={getModelLabel(model)}
+                  />
+                </div>
+              ))}
             </div>
+          ) : (
+            <div className={styles.userGroup}>
+              <h4 className={styles.groupTitle}>👤 Vlasnik</h4>
+                <p>
+                  Trenutno nemate dostupna pitanja za korišćenje. <br />
+                  Za više informacija, kontaktirajte nas na <a href="mailto:info@mojtermin.site">info@mojtermin.site</a>
+                </p>
+            </div>
+          )}
 
-            {/* Zaposleni */}
+          {/* Zaposleni */}
+          {Object.keys(getActiveModels(limits.employees)).length > 0 ? (
             <div className={styles.userGroup}>
               <h4 className={styles.groupTitle}>👥 Zaposleni</h4>
-              <div className={styles.modelSection}>
-                <ProgressBar
-                  current={todayUsage.employees.llama3}
-                  limit={limits.employees.llama3}
-                  label="Osnovan model"
-                />
-              </div>
-              <div className={styles.modelSection}>
-                <ProgressBar
-                  current={todayUsage.employees.llama4}
-                  limit={limits.employees.llama4}
-                  label="Napredni model"
-                />
-              </div>
+              {Object.entries(getActiveModels(limits.employees)).map(([model, limit]) => (
+                <div key={model} className={styles.modelSection}>
+                  <ProgressBar
+                    current={todayUsage.employees?.[model] || 0}
+                    limit={limit}
+                    label={getModelLabel(model)}
+                  />
+                </div>
+              ))}
             </div>
+          ) : (
+            <div className={styles.userGroup}>
+              <h4 className={styles.groupTitle}>👥 Zaposleni</h4>
+                <p>
+                  Trenutno nemate dostupna pitanja za zaposlene. <br />
+                  Za više informacija, kontaktirajte nas na <a href="mailto:info@mojtermin.site">info@mojtermin.site</a>
+                </p>
+            </div>
+          )}
 
-            {/* Klijenti */}
+          {/* Klijenti */}
+          {Object.keys(getActiveModels(limits.bookings)).length > 0 ? (
             <div className={styles.userGroup}>
               <h4 className={styles.groupTitle}>🛒 Klijenti</h4>
-              <div className={styles.modelSection}>
-                <ProgressBar
-                  current={todayUsage.bookings.llama3}
-                  limit={limits.bookings.llama3}
-                  label="Osnovan model"
-                />
-              </div>
-              <div className={styles.modelSection}>
-                <ProgressBar
-                  current={todayUsage.bookings.llama4}
-                  limit={limits.bookings.llama4}
-                  label="Napredni model"
-                />
-              </div>
+              {Object.entries(getActiveModels(limits.bookings)).map(([model, limit]) => (
+                <div key={model} className={styles.modelSection}>
+                  <ProgressBar
+                    current={todayUsage.bookings?.[model] || 0}
+                    limit={limit}
+                    label={getModelLabel(model)}
+                  />
+                </div>
+              ))}
             </div>
-          </>
-        )}
-
-        {!isOwner && (
-          <div className={styles.employeeMessage}>
-            <p className={styles.dailyQuotaText}>
-              📌 <strong>Imate 20 pitanja dnevno</strong>
-            </p>
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className={styles.userGroup}>
+              <h4 className={styles.groupTitle}>🛒 Klijenti</h4>
+                <p>
+                  Trenutno nemate dostupna pitanja za klijente. <br />
+                  Za više informacija, kontaktirajte nas na <a href="mailto:info@mojtermin.site">info@mojtermin.site</a>
+                </p>
+            </div>
+          )}
+        </div>
+      )}      
 
       {/* Model Preference & Assistant Info */}
       {isOwner && (
@@ -275,7 +303,7 @@ export default function AiInfoPage() {
                 onChange={() => handleModelChange("default")}
                 disabled={savingModel}
               />
-              <span>Automatski switch (preporuka)</span>
+              <span>Automatski izbor (preporučeno)</span>
             </label>
 
             <label className={styles.radioLabel}>
@@ -287,27 +315,27 @@ export default function AiInfoPage() {
                 onChange={() => handleModelChange("jeftin")}
                 disabled={savingModel}
               />
-              <span>Prioritet: Osnovan model</span>
+              <span>Prioritet: Osnovni model</span>
             </label>
 
-            {savingModel && <p className={styles.savingText}>Čuvanje...</p>}
+            {savingModel && <p className={styles.savingText}>Čuvanje preferencije...</p>}
           </div>
 
           <div className={styles.info}>
             <strong>ℹ️ Kako funkcioniše:</strong>
             <ul>
               <li>
-                <strong>Automatski switch:</strong> Koristi napredni model dok je dostupan, zatim osnovan
+                <strong>Automatski izbor:</strong> Aplikacija koristi prvo naprednije modele dostupne u vašem paketu, kako biste dobili najbolje rezultate.
               </li>
               <li>
-                <strong>Prioritet osnovan:</strong> Koristi osnovan model, kako bi uštedeo napredni model
+                <strong>Prioritet osnovni:</strong> Fokusira se na finansijski efikasne modele, čuvajući napredne modele za kada su zaista potrebni.
               </li>
             </ul>
           </div>
 
           <div style={{marginTop:'15px', padding:'0px 8px'}}>
             <p>
-              Odabrana preferenca se koristi za sve vaše zaposlene i klijente. Svako od njih ima svoja dnevna ograničenja.
+              Odabrana preferenca se koristi za sve vaše zaposlene i klijente. Svako od njih ima svoja ograničenja.
             </p>
           </div>
 
@@ -334,10 +362,17 @@ export default function AiInfoPage() {
             <div className={styles.separator}></div>
 
             <div className={styles.infoSection}>
-              <h4>Model za analizu:</h4>
+              <h4>Dostupni modeli:</h4>
               <ul>
-                <li>Osnovan: Mistral-Small-24B</li>
-                <li>Napredni: Llama-4-Maverick</li>
+                <li>
+                  <strong>Llama 4 Maverick:</strong> Najnapredniji model za precizne i detaljne odgovore na pitanja klijenata i složene zahteve.
+                </li>
+                <li>
+                  <strong>Qwen 3.5:</strong> Efikasan model koji brzo generiše kvalitetne odgovore i štedi resurse.
+                </li>
+                <li>
+                  <strong>GPT-OSS 20B:</strong> Pouzdan model za standardne odgovore i svakodnevnu komunikaciju sa klijentima.
+                </li>
               </ul>
             </div>
 
@@ -346,7 +381,6 @@ export default function AiInfoPage() {
               <ul>
                 <li>✓ Analiza termina</li>
                 <li>✓ Preporuke optimizacije</li>
-                <li>✓ Financijski izveštaji</li>
                 <li>✓ Grafici i vizuelizacija</li>
                 <li>✓ Upravljanje terminima</li>
               </ul>
@@ -376,10 +410,17 @@ export default function AiInfoPage() {
             <div className={styles.separator}></div>
 
             <div className={styles.infoSection}>
-              <h4>Model za analizu:</h4>
+              <h4>Dostupni modeli:</h4>
               <ul>
-                <li>Osnovan: Mistral-Small-24B</li>
-                <li>Napredni: Llama-4-Maverick</li>
+                <li>
+                  <strong>Llama 4 Maverick:</strong> Najnapredniji model za precizne i detaljne odgovore na pitanja klijenata i složene zahteve.
+                </li>
+                <li>
+                  <strong>Qwen 3.5:</strong> Efikasan model koji brzo generiše kvalitetne odgovore i štedi resurse.
+                </li>
+                <li>
+                  <strong>GPT-OSS 20B:</strong> Pouzdan model za standardne odgovore i svakodnevnu komunikaciju sa klijentima.
+                </li>
               </ul>
             </div>
 

@@ -10,6 +10,7 @@ export default function PanelPage() {
   const logout = useLogout();
   const [showTabela, setShowTabela] = useState(false);
   const [desavanjaData, setDesavanjaData] = useState([]);
+  const [vlasnikId, setVlasnikId] = useState(0);
   const [loading, setLoading] = useState(false);
   const [canRefresh, setCanRefresh] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -48,7 +49,8 @@ export default function PanelPage() {
         datum: item.datum_rezervacije,
         potvrdio_user: item.potvrdio_user || {},
       })).sort((a, b) => a.vreme_rezervacije.localeCompare(b.vreme_rezervacije));
-
+      
+      setVlasnikId(data.vlasnik_id);
       setDesavanjaData(allEvents);
     } catch (error) {
       console.error("Greška:", error);
@@ -66,7 +68,7 @@ export default function PanelPage() {
 
   const izmeniTermin = (event) => {
     const userId = localStorage.getItem("userId");
-    const url = `/zakazi/${userId}/izmeni/${event.token}`;
+    const url = `/zakazi/${vlasnikId}/izmeni/${event.token}`;
     window.open(url, "_blank");
   };
 
@@ -119,8 +121,8 @@ export default function PanelPage() {
         </div>
       </div>
       {showTabela
-        ? <Tabela desavanjaData={desavanjaData} fetchData={fetchData} loading={loading} izmeniTermin={izmeniTermin} showFilters={showFilters} resetFiltersKey={resetFiltersKey}/>
-        : <Kalendar desavanjaData={desavanjaData} fetchData={fetchData} loading={loading} izmeniTermin={izmeniTermin} />
+        ? <Tabela desavanjaData={desavanjaData} fetchData={fetchData} loading={loading} izmeniTermin={izmeniTermin} vlasnikId={vlasnikId} showFilters={showFilters} resetFiltersKey={resetFiltersKey}/>
+        : <Kalendar desavanjaData={desavanjaData} fetchData={fetchData} loading={loading} izmeniTermin={izmeniTermin} vlasnikId={vlasnikId} />
       }
       <div className={`${styles.loadingScreen} ${loadingScreen ? '' : styles.ucitano}`}>
         <span className="spinner"></span>

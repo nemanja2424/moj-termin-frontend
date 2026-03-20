@@ -14,6 +14,107 @@ const TypingIndicator = () => (
   </div>
 );
 
+// Helper funkcija za parsiranje markdown tabele
+const parseMarkdownTable = (tableText) => {
+  const lines = tableText.trim().split('\n').map(line => line.trim()).filter(line => line);
+  
+  if (lines.length < 2) return null;
+  
+  // Prvi red su headeri
+  const headerLine = lines[0];
+  if (!headerLine.startsWith('|') || !headerLine.endsWith('|')) return null;
+  
+  const headers = headerLine
+    .split('|')
+    .map(h => h.trim())
+    .filter(h => h);
+  
+  // Drugi red treba da bude separator (---)
+  const separatorLine = lines[1];
+  if (!separatorLine.match(/^\|[\s\-:|\s]*\|$/)) return null;
+  
+  // Ostali redovi su podaci
+  const rows = [];
+  for (let i = 2; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line.startsWith('|') || !line.endsWith('|')) continue;
+    
+    const cells = line
+      .split('|')
+      .map(c => c.trim())
+      .filter((c, idx) => idx > 0 && idx < headers.length + 1);
+    
+    if (cells.length === headers.length) {
+      rows.push(cells);
+    }
+  }
+  
+  return rows.length > 0 ? { headers, rows } : null;
+};
+
+// Tabela komponenta
+const TableComponent = ({ tableData }) => {
+  if (!tableData || !tableData.headers || tableData.headers.length === 0) {
+    return <p>Tabela nije dostupna</p>;
+  }
+
+  return (
+    <div style={{ overflowX: "auto", marginTop: "12px", marginBottom: "12px" }}>
+      <table style={{
+        borderCollapse: "collapse",
+        width: "100%",
+        border: "1px solid #ddd",
+        fontSize: "14px",
+      }}>
+        <thead>
+          <tr style={{ backgroundColor: "#f3f4f6" }}>
+            {tableData.headers.map((header, idx) => (
+              <th key={idx} style={{
+                border: "1px solid #ddd",
+                padding: "8px 12px",
+                textAlign: "left",
+                fontWeight: "600",
+              }}>
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {tableData.rows.map((row, rowIdx) => (
+            <tr key={rowIdx} style={{ backgroundColor: rowIdx % 2 === 0 ? "#fff" : "#f9fafb" }}>
+              {row.map((cell, cellIdx) => (
+                <td key={cellIdx} style={{
+                  border: "1px solid #ddd",
+                  padding: "8px 12px",
+                }}>
+                  <ReactMarkdown 
+                    components={{
+                      strong: ({ node, children, ...props }) => (
+                        <strong style={{ 
+                          fontWeight: "700", 
+                          color: "#2563eb"
+                        }}>
+                          {children}
+                        </strong>
+                      ),
+                      p: ({ node, children, ...props }) => (
+                        <span>{children}</span>
+                      ),
+                    }}
+                  >
+                    {cell}
+                  </ReactMarkdown>
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
 const ChartComponent = React.memo(({ chartData }) => {
   const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
@@ -113,44 +214,110 @@ const parseMessageContent = (text) => {
   // Ukloni agent proposal iz teksta za prikaz
   let displayText = text.replace(/\[agent_proposal\]([\s\S]*?)\[\/agent_proposal\]/g, '').trim();
   
-  // Parsuj grafike iz displayText-a
-  const chartRegex = /\[CHART\]([\s\S]*?)\[\/CHART\]/g;
-  let lastIndex = 0;
-  let chartMatch;
-
-  while ((chartMatch = chartRegex.exec(displayText)) !== null) {
-    // Dodaj tekst pre grafikona
-    if (chartMatch.index > lastIndex) {
-      parts.push({
-        type: "text",
-        content: displayText.substring(lastIndex, chartMatch.index),
-      });
+  // Pronađi sve markdown tabele - linije koje počinju sa |
+  const lines = displayText.split('\n');
+  let tableStartIndex = -1;
+  let tableEndIndex = -1;
+  let isInTable = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    const isTableLine = line.startsWith('|') && line.endsWith('|');
+    
+    if (isTableLine && !isInTable) {
+      tableStartIndex = i;
+      isInTable = true;
+    } else if (!isTableLine && isInTable) {
+      tableEndIndex = i;
+      isInTable = false;
     }
-
-    // Dodaj grafikon
-    try {
-      const chartData = JSON.parse(chartMatch[1]);
-      parts.push({
-        type: "chart",
-        content: chartData,
-      });
-    } catch (e) {
-      console.error("Greška pri parsiranju grafikona:", e);
-      parts.push({
-        type: "text",
-        content: chartMatch[0],
-      });
-    }
-
-    lastIndex = chartMatch.index + chartMatch[0].length;
   }
+  
+  // Ako je tabela na kraju
+  if (isInTable) {
+    tableEndIndex = lines.length;
+  }
+  
+  // Procesiraj tekst i tabele
+  if (tableStartIndex !== -1 && tableEndIndex !== -1) {
+    // Tekst pre tabele
+    if (tableStartIndex > 0) {
+      const beforeTableText = lines.slice(0, tableStartIndex).join('\n').trim();
+      if (beforeTableText) {
+        parts.push({
+          type: "text",
+          content: beforeTableText,
+        });
+      }
+    }
+    
+    // Samo tabela
+    const tableLines = lines.slice(tableStartIndex, tableEndIndex);
+    const tableText = tableLines.join('\n');
+    const tableData = parseMarkdownTable(tableText);
+    
+    if (tableData) {
+      parts.push({
+        type: "table",
+        content: tableData,
+      });
+    } else {
+      parts.push({
+        type: "text",
+        content: tableText,
+      });
+    }
+    
+    // Tekst posle tabele
+    if (tableEndIndex < lines.length) {
+      const afterTableText = lines.slice(tableEndIndex).join('\n').trim();
+      if (afterTableText) {
+        parts.push({
+          type: "text",
+          content: afterTableText,
+        });
+      }
+    }
+  } else {
+    // Nema tabele - parsuj kao pre sa grafikama
+    const chartRegex = /\[CHART\]([\s\S]*?)\[\/CHART\]/g;
+    let lastIndex = 0;
+    let chartMatch;
 
-  // Dodaj ostatak teksta
-  if (lastIndex < displayText.length) {
-    parts.push({
-      type: "text",
-      content: displayText.substring(lastIndex),
-    });
+    while ((chartMatch = chartRegex.exec(displayText)) !== null) {
+      // Dodaj tekst pre grafikona
+      if (chartMatch.index > lastIndex) {
+        parts.push({
+          type: "text",
+          content: displayText.substring(lastIndex, chartMatch.index),
+        });
+      }
+
+      // Dodaj grafikon
+      try {
+        const chartData = JSON.parse(chartMatch[1]);
+        parts.push({
+          type: "chart",
+          content: chartData,
+        });
+      } catch (e) {
+        console.error("Greška pri parsiranju grafikona:", e);
+        parts.push({
+          type: "text",
+          content: chartMatch[0],
+        });
+      }
+
+      lastIndex = chartMatch.index + chartMatch[0].length;
+    }
+
+    // Dodaj ostatak teksta
+    if (lastIndex < displayText.length) {
+      parts.push({
+        type: "text",
+        content: displayText.substring(lastIndex),
+      });
+    }
   }
 
   // Ako nema ničega, vrati ceo displayText
@@ -1131,11 +1298,26 @@ export default function StatistikaPage() {
                           <div className={styles.markdown}>
                             {getCachedParsedContent(message.id, message.text).map((part, idx) =>
                               part.type === "text" ? (
-                                <ReactMarkdown key={idx}>
-                                  {part.content}
-                                </ReactMarkdown>
+                                <div key={idx} style={{ marginBottom: "8px" }}>
+                                  <ReactMarkdown 
+                                    components={{
+                                      strong: ({ node, children, ...props }) => (
+                                        <strong style={{ 
+                                          fontWeight: "700", 
+                                          color: "#2563eb"
+                                        }}>
+                                          {children}
+                                        </strong>
+                                      ),
+                                    }}
+                                  >
+                                    {part.content}
+                                  </ReactMarkdown>
+                                </div>
                               ) : part.type === "chart" ? (
                                 <ChartComponent key={idx} chartData={part.content} />
+                              ) : part.type === "table" ? (
+                                <TableComponent key={idx} tableData={part.content} />
                               ) : null
                             )}
                             {pendingAgent && message.id === messages[messages.length - 1].id && (
