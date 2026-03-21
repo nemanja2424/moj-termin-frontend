@@ -1,16 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, useRef, Suspense } from 'react';
+import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './page.module.css';
 import Footer from '@/components/Footer';
 
-export default function HomePage() {
+function HomePageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const inputRef = useRef(null);
   const [preduzeca, setPreduzeca] = useState([]);
   const [kategorije, setKategorije] = useState([]);
@@ -26,13 +25,17 @@ export default function HomePage() {
     fetchPreduzecaAndKategorije();
     checkAuthentication();
     
-    const message = searchParams.get('message');
-    const success = searchParams.get('success');
-    
-    if (success === 'true' && message) {
-      toast.success(decodeURIComponent(message));
+    // Učitaj poruku iz URL parametara
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const message = params.get('message');
+      const success = params.get('success');
+      
+      if (success === 'true' && message) {
+        toast.success(decodeURIComponent(message));
+      }
     }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     if (searchOpen && inputRef.current) {
@@ -390,5 +393,13 @@ export default function HomePage() {
       />
       <Footer />
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div>Učitavanje...</div>}>
+      <HomePageContent />
+    </Suspense>
   );
 }
