@@ -1,7 +1,7 @@
 'use client';
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import styles from '../home.module.css'
+import styles from '../about/home.module.css'
 
 export default function TermsPage() {
   return (
