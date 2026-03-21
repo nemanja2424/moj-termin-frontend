@@ -45,7 +45,7 @@ const LoginContent = () => {
     
     setLoading(true);
     try {
-      const res = await fetch('https://test.mojtermin.site/api/auth/login', {
+      const res = await fetch('https://mojtermin.site/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -184,7 +184,7 @@ const LoginContent = () => {
     setLoading(true)
   
     try {
-      const res = await fetch('https://test.mojtermin.site/api/auth/signup', {
+      const res = await fetch('https://mojtermin.site/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
