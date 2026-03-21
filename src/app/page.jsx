@@ -173,7 +173,7 @@ function HomePageContent() {
         <div className={styles.headerContent}>
           {/* Logo - Skriva se na mobilnom kada je search otvoren */}
           <div className={`${styles.logo} ${searchOpen ? styles.logoHidden : ''}`}>
-            <img src="/images/logo3.png" alt="Moj Termin" />
+            <img src="/Images/logo3.png" alt="Moj Termin" />
           </div>
           
           {/* Search Bar - Normalno na desktopu, ekspanduje se na mobilnom */}
