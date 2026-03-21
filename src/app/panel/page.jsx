@@ -39,7 +39,7 @@ export default function DashboardPage() {
 
     try {
       const response = await fetch(
-        `https://mojtermin.site/api/auth/me/${userId}`,
+        `https://test.mojtermin.site/api/auth/me/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -292,7 +292,7 @@ export default function DashboardPage() {
         <div className={styles.sekcija30}>
           <div className={`${styles.stavka2}`}>
             <div className={styles.logoDiv}>
-              <img loading='lazy' src={vlasnik.putanja_za_logo === '/Images/logo.webp' ? '/Images/logo.webp' : `https://mojtermin.site/api/logo/${vlasnik.putanja_za_logo}`} />
+              <img loading='lazy' src={vlasnik.putanja_za_logo === '/Images/logo3.png' ? '/Images/logo3.png' : `https://test.mojtermin.site/api/logo/${vlasnik.putanja_za_logo}`} />
             </div>
             <div>
               <h2>{vlasnik?.ime_preduzeca || "Preduzece"}</h2>

@@ -12,6 +12,8 @@ export default function DefaultDesign({
 }) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  
+  const [rola, setRola] = useState(null);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedCalendarDate, setSelectedCalendarDate] = useState(null);
@@ -51,6 +53,12 @@ export default function DefaultDesign({
       }));
     }
   }, [preduzece.lokacije]);
+
+  // Inicijalizuj kalendar na osnovu formData.dan, mesec, godina
+  useEffect(() => {
+    const storedRola = localStorage.getItem('rola');
+    setRola(storedRola);
+  }, []);
 
   // Inicijalizuj kalendar na osnovu formData.dan, mesec, godina
   useEffect(() => {
@@ -221,7 +229,7 @@ export default function DefaultDesign({
       <header className={styles.header}>
         <div className={styles.brandFirme}>
           {forma.logoFirme === true && 
-            <img loading='lazy' className={styles.logo} src={preduzece.putanja_za_logo === '/Images/logo.webp' ? '/Images/logo.webp' : `https://mojtermin.site/api/logo/${preduzece.putanja_za_logo}`} />
+            <img loading='lazy' className={styles.logo} src={preduzece.putanja_za_logo === '/Images/logo3.png' ? '/Images/logo3.png' : `https://test.mojtermin.site/api/logo/${preduzece.putanja_za_logo}`} />
           }
           {forma.nazivFirme === true && (
             <h2>{preduzece.ime_preduzeca}</h2>
@@ -501,7 +509,7 @@ export default function DefaultDesign({
                       </>
                     )}
                 </button>
-                {tipUlaska === 3 && formData.potvrdio === null && (
+                {tipUlaska === 3 && formData.potvrdio === null && (rola === '1' || rola === '2') && (
                   <button onClick={(e) => {e.preventDefault; potvrdiTermin(formData);}} className={styles.submitBtn} type='button'>
                     {loadingSpinPotvrda ? (
                       <div style={{maxHeight:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>

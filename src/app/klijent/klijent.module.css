@@ -1,0 +1,654 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f9ff 0%, #eef4ff 100%);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100vw;
+}
+
+.container * {
+  box-sizing: border-box;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(90deg, #ffffff 0%, #f9fbff 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 16px 20px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo img {
+  height: 60px;
+  margin: 0;
+}
+
+.header h1 {
+  flex: 1;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+}
+
+.logoutBtn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.logoutBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.mainContent {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 20px 60px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* TABS */
+.tabsContainer {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e5e7eb;
+  overflow-x: hidden;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.tab {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab:hover {
+  color: #3b82f6;
+}
+
+.tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+/* TAB CONTENT */
+.tabContent {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.tabContent h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 24px;
+}
+
+/* APPOINTMENTS LIST */
+.appointmentsList {
+  display: grid;
+  gap: 16px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.appointmentCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.appointmentCard:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.appointmentHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.appointmentHeader > div {
+  flex: 1;
+}
+
+.appointmentHeader h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.confirmed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status.completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status.cancelled {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.appointmentDetails {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.detail i {
+  color: #3b82f6;
+  font-size: 16px;
+}
+
+.appointmentSubtitle {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 4px 0 0 0;
+}
+
+.serviceInfo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+  padding: 12px;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.serviceItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.serviceItem label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.serviceItem span {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.appointmentDescription {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #6b7280;
+  margin: 12px 0 0 0;
+  border-left: 3px solid #3b82f6;
+}
+
+.appointmentDescription strong {
+  color: #111827;
+}
+
+.appointmentFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.appointmentId {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.appointmentDate {
+  color: #9ca3af;
+}
+
+/* PROFILE CARD */
+.profileCard {
+  display: grid;
+  gap: 20px;
+  max-width: 500px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.profileField {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 16px;
+}
+
+.profileField label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.profileField p {
+  font-size: 16px;
+  color: #111827;
+  margin: 0;
+}
+
+/* EMPTY STATE */
+.emptyState {
+  text-align: center;
+  padding: 80px 20px;
+  color: #6b7280;
+}
+
+.emptyState i {
+  font-size: 64px;
+  color: #d1d5db;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.emptyState h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.emptyState p {
+  color: #9ca3af;
+  margin-bottom: 24px;
+}
+
+.primaryBtn {
+  background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.loadingScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f5f9ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 10px;
+    margin-bottom: 20px;
+  }
+
+  .headerContent {
+    gap: 8px;
+  }
+
+  .logo img {
+    height: 45px;
+  }
+
+  .header h1 {
+    font-size: 18px;
+  }
+
+  .mainContent {
+    padding: 0 12px 40px;
+  }
+
+  .tabContent {
+    padding: 20px;
+  }
+
+  .appointmentDetails {
+    grid-template-columns: 1fr;
+  }
+
+  .appointmentFooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .serviceInfo {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profileCard {
+    max-width: 100%;
+  }
+
+  .profileField input,
+  .profileField textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+
+  .tab {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .tabContent {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 10px 8px;
+  }
+
+  .logo img {
+    height: 40px;
+  }
+
+  .header h1 {
+    font-size: 16px;
+  }
+
+  .logoutBtn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .tab {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .tabContent {
+    padding: 16px;
+  }
+
+  .tabContent h2 {
+    font-size: 20px;
+  }
+
+  .appointmentCard {
+    padding: 16px;
+  }
+
+  .appointmentHeader h3 {
+    font-size: 16px;
+  }
+
+  .serviceInfo {
+    grid-template-columns: 1fr;
+  }
+
+  .profileCard {
+    max-width: 100%;
+  }
+
+  .profileField {
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+
+  .profileField label {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .profileField p {
+    font-size: 14px;
+  }
+
+  .profileField input,
+  .profileField textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+
+  .tab {
+    padding: 8px 10px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .tab i {
+    font-size: 14px;
+  }
+
+  .tabsContainer {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .primaryBtn {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .logoutBtn {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .mainContent {
+    padding: 0 8px 40px 8px;
+  }
+}
+
+/* EXTRA SMALL DEVICES */
+@media (max-width: 360px) {
+  .header {
+    padding: 8px 6px;
+  }
+
+  .headerContent {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .logo img {
+    height: 35px;
+  }
+
+  .header h1 {
+    font-size: 14px;
+    order: -1;
+  }
+
+  .logoutBtn {
+    font-size: 10px;
+    padding: 6px 8px;
+    width: 100%;
+  }
+
+  .tab {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .tab i {
+    display: none;
+  }
+
+  .tabContent {
+    padding: 12px;
+  }
+
+  .tabContent h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .profileField {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+
+  .profileField label {
+    font-size: 10px;
+  }
+
+  .profileField p {
+    font-size: 13px;
+  }
+
+  .profileField input,
+  .profileField textarea {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+  .primaryBtn {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .appointmentHeader h3 {
+    font-size: 15px;
+  }
+
+  .appointmentSubtitle {
+    font-size: 12px;
+  }
+
+  .serviceItem label {
+    font-size: 10px;
+  }
+
+  .serviceItem span {
+    font-size: 13px;
+  }
+
+  .mainContent {
+    padding: 0 6px 40px 6px;
+  }
+
+  .tabsContainer {
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+}

@@ -1,189 +1,393 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'
-import styles from './home.module.css';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import styles from './page.module.css';
 import Footer from '@/components/Footer';
-import Header from '@/components/Header';
-
 
 export default function HomePage() {
-  const [monthly, setMonthly] = useState(true);
-
-  const toggleTime = () => setMonthly(prev => !prev);
-  const toggleYearly = () => setMonthly(true);
-  const toggleMonthly = () => setMonthly(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const inputRef = useRef(null);
+  const [preduzeca, setPreduzeca] = useState([]);
+  const [kategorije, setKategorije] = useState([]);
+  const [filteredPreduzeca, setFilteredPreduzeca] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.remove('hidden');
+    fetchPreduzecaAndKategorije();
+    checkAuthentication();
     
-          if (entry.target.classList.contains('anim')) {
-            entry.target.classList.add('fade-slide-in-right');
-          } else if (entry.target.classList.contains('anim2')) {
-            entry.target.classList.add('fade-slide-in-down');
-          } else if (entry.target.classList.contains('anim3')) {
-            entry.target.classList.add('fade-slide-in-left');
-          } else if (entry.target.classList.contains('anim4')) {
-            entry.target.classList.add('fade-slide-in-up');
-          }
+    const message = searchParams.get('message');
+    const success = searchParams.get('success');
     
+    if (success === 'true' && message) {
+      toast.success(decodeURIComponent(message));
+    }
+  }, [searchParams]);
 
-    
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.2 });
-    
+  useEffect(() => {
+    if (searchOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [searchOpen]);
 
-    const elementsAnim = document.querySelectorAll('.anim');
-    const elementsAnim2 = document.querySelectorAll('.anim2');
-    const elementsAnim3 = document.querySelectorAll('.anim3');
-    const elementsAnim4 = document.querySelectorAll('.anim4');
+  const checkAuthentication = () => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (authToken && isTokenValid(authToken)) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+    }
+  };
 
-    elementsAnim.forEach(el => {
-      el.classList.add('hidden');
-      observer.observe(el);
-    });
+  const isTokenValid = (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      return decoded.exp > currentTime;
+    } catch (error) {
+      return false;
+    }
+  };
 
-    elementsAnim2.forEach(el => {
-      el.classList.add('hidden');
-      observer.observe(el);
-    });
+  const handleProfileClick = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
 
-    elementsAnim3.forEach(el => {
-      el.classList.add('hidden');
-      observer.observe(el);
-    });
+    // Ako je prijavljen - redirekt prema roli
+    const rola = localStorage.getItem('rola');
+    if (rola === '1' || rola === '2') {
+      router.push('/panel');
+    } else if (rola === '3') {
+      router.push('/klijent');
+    }
+  };
 
-    elementsAnim4.forEach(el => {
-      el.classList.add('hidden');
-      observer.observe(el);
-    });
+  const fetchPreduzecaAndKategorije = async () => {
+    try {
+      const response = await fetch('https://test.mojtermin.site/api/preduzeca/get');
+      const data = await response.json();
+      
+      if (data.success && Array.isArray(data.preduzeca)) {
+        setPreduzeca(data.preduzeca);
+        setFilteredPreduzeca(data.preduzeca);
+      }
 
-    return () => {
-      elementsAnim.forEach(el => observer.unobserve(el));
-      elementsAnim2.forEach(el => observer.unobserve(el));
-      elementsAnim3.forEach(el => observer.unobserve(el));
-      elementsAnim4.forEach(el => observer.unobserve(el));
-    };
-  }, []);
-  {/* animacije: 1 = desno, 2 = dole, 3 = levo, 4 = gore */}
+      if (Array.isArray(data.kategorije)) {
+        setKategorije(data.kategorije);
+      }
 
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching preduzeca:', error);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    let filtered = preduzeca;
+
+    // Primeni pretragu
+    if (searchTerm) {
+      filtered = filtered.filter(p => 
+        p.ime_preduzeca.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.opis && p.opis.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+
+    // Primeni kategoriju
+    if (activeCategory !== 'all') {
+      filtered = filtered.filter(p => String(p.id_kateg) === String(activeCategory));
+    }
+
+    setFilteredPreduzeca(filtered);
+  }, [searchTerm, activeCategory, preduzeca]);
+
+  const handleCardClick = (id) => {
+    router.push(`/zakazi/${id}`);
+  };
+
+  const getImageUrl = (putnja) => {
+    if (!putnja) return null;
+    if (putnja.startsWith('http')) return putnja;
+    return `https://test.mojtermin.site/api/logo/${putnja}`;
+  };
+
+  // Mapping kategorija na ikone
+  const categoryIconMap = {
+    'Frizer': 'fa-solid fa-scissors',
+    'Frizerski': 'fa-solid fa-scissors',
+    'Zdravlje': 'fa-solid fa-stethoscope',
+    'Zdravstvena zaštita': 'fa-solid fa-stethoscope',
+    'Lepota': 'fa-solid fa-spa',
+    'Beauty': 'fa-solid fa-spa',
+    'Fitness': 'fa-solid fa-dumbbell',
+    'Teretana': 'fa-solid fa-dumbbell',
+    'Restorani': 'fa-solid fa-utensils',
+    'Restoran': 'fa-solid fa-utensils',
+    'Fotografija': 'fa-solid fa-camera',
+    'Fotografija i video': 'fa-solid fa-camera',
+    'Salon': 'fa-solid fa-chair',
+    'Masaža': 'fa-solid fa-hand',
+    'Zubni lekar': 'fa-solid fa-tooth',
+    'Veterinar': 'fa-solid fa-paw',
+    'Obuka': 'fa-solid fa-graduation-cap',
+  };
+
+  const getIconForCategory = (categoryName) => {
+    return categoryIconMap[categoryName] || 'fa-solid fa-briefcase';
+  };
 
   return (
-    <div className={styles.sve}>
-      <Header />
-      <div className={styles.hero}>
-        <div className={styles['zatamni-hero']}></div>
-        <div className={styles.content}>
-          <div className={styles['hero-naslov']}>
-            <h1 className='anim2'>Digitalno zakazivanje termina za moderan biznis</h1>
-            <h3 className='anim3'>Brže i jednostavnije upravljanje terminima za vas i vaše klijente.</h3>
-            <a href="#footer" className={`${styles.button1} + anim4`} style={{ marginTop: '20px' }}>Kontaktirajte nas</a>
+    <div className={styles.container}>
+      {/* OVERLAY - Prikazuje se kada je search otvoren na mobilnom */}
+      {searchOpen && (
+        <div 
+          className={styles.searchOverlay}
+          onClick={() => {
+            setSearchOpen(false);
+          }}
+        />
+      )}
+
+      {/* HEADER */}
+      <div className={`${styles.header} ${searchOpen ? styles.headerSearchOpen : ''}`}>
+        <div className={styles.headerContent}>
+          {/* Logo - Skriva se na mobilnom kada je search otvoren */}
+          <div className={`${styles.logo} ${searchOpen ? styles.logoHidden : ''}`}>
+            <img src="/images/logo3.png" alt="Moj Termin" />
           </div>
+          
+          {/* Search Bar - Normalno na desktopu, ekspanduje se na mobilnom */}
+          <div className={`${styles.searchBar} ${searchOpen ? styles.searchBarActive : ''}`}>
+            <i className={`fa-solid fa-search ${styles.searchIcon}`}></i>
+            <input
+              ref={inputRef}
+              autoFocus={searchOpen}
+              type="text"
+              className={styles.searchInput}
+              placeholder="Pretraži firme..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setSearchOpen(false);
+                }
+              }}
+            />
+            {searchOpen && (
+              <button 
+                className={styles.closeSearchBtn}
+                onClick={() => {
+                  setSearchTerm('');
+                  setSearchOpen(false);
+                }}
+                type="button"
+              >
+                <i className="fa-solid fa-times"></i>
+              </button>
+            )}
+          </div>
+
+          {/* Desktop Profile Button - Skrit na mobilnom */}
+          <button 
+            className={`${styles.button} ${searchOpen ? styles.buttonHidden : ''}`}
+            onClick={handleProfileClick}
+          >
+            <i className="fa-solid fa-user-circle" style={{ marginRight: '8px' }}></i>
+            Profil
+          </button>
+
+          {/* Mobile Search Icon - Prikazuje se samo na mobilnom */}
+          <button 
+            className={styles.mobileSearchBtn}
+            onClick={() => setSearchOpen(prev => !prev)}
+            type="button"
+          >
+            <i className="fa-solid fa-search"></i>
+          </button>
         </div>
       </div>
 
-      <section className={styles['info-between']}>
-        <h2 className='anim2'><br />Rešite sve svoje potrebe za zakazivanje termina na jednom mestu</h2>
-        <p className='anim'>Naš sistem za digitalno zakazivanje termina je jednostavan za korišćenje i prilagodljiv svim vrstama poslovanja. Bilo da ste frizer, lekar, trener ili neko drugi ko upravlja terminima, naš alat vam omogućava brzo i efikasno upravljanje, štedeći vreme i smanjujući greške. Sa našim rešenjem, vaši klijenti će imati jednostavan pristup, a vi ćete moći da se fokusirate na rast svog biznisa.</p>
-        <p className='anim3'><br/>Naš sistem nudi jednostavnu stranu za zakazivanje termina za vaše klijente, kontrolnu tablu za vas sa svim potrebnim informacijama, kao i analitiku koja vam pomaže da pratite učinkovitost vašeg poslovanja. Uz mogućnost automatskog slanja obaveštenja i bezbednost podataka, možete biti sigurni da će vaše poslovanje teći glatko i sigurno.</p>
-        <p className='anim4'><br/>Bez obzira na vrstu vašeg biznisa, naš sistem je fleksibilan i lako se integriše u vaše postojeće radne procese. Pružite svojim klijentima najbolje iskustvo u zakazivanju termina i uštedite dragoceno vreme!</p>
-      </section>
+      {/* MAIN CONTENT */}
+      <div className={styles.mainContent}>
+        {searchTerm || activeCategory !== 'all' ? (
+          <>
+            <h1 className={styles.title}>
+              {searchTerm ? `Rezultati za: "${searchTerm}"` : 'Filtrirani rezultati'}
+            </h1>
+            <p className={styles.subtitle}>
+              {filteredPreduzeca.length} {filteredPreduzeca.length === 1 ? 'rezultat' : 'rezultata'} pronađeno
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className={styles.title}>Pronađi termin</h1>
+            <p className={styles.subtitle}>Brzo i jednostavno zakaži termin kod najboljih firmi</p>
+          </>
+        )}
 
-      <section id='about' className={styles['benefits-section']}>
-        <h2>Zašto odabrati naš sistem?</h2>
-        <div className={styles['benefits-cards']}>
-
-          <div className={`${styles['benefit-card']} anim2`}>
-            <div className={styles['benefit-icon']}><i className="fa-regular fa-clock"></i></div>
-            <div className={styles['benefit-title']}>Brzo i jednostavno zakazivanje</div>
-            <div className={styles['benefit-desc']}>
-              Naš sistem omogućava brzo kreiranje i pregled termina uz intuitivan interfejs koji štedi vreme i smanjuje greške.
-            </div>
-          </div>
-
-          <div className={`${styles['benefit-card']} anim2`}>
-            <div className={styles['benefit-icon']}><i className="fa-solid fa-mobile-screen-button"></i></div>
-            <div className={styles['benefit-title']}>Pristup sa bilo kog uređaja</div>
-            <div className={styles['benefit-desc']}>
-              Bez obzira da li ste na računaru, tabletu ili telefonu, pristup rasporedu i podacima je uvek na dohvat ruke.
-            </div>
-          </div>
-
-          <div className={`${styles['benefit-card']} anim2`}>
-            <div className={styles['benefit-icon']}><i className="fa-solid fa-chart-line"></i></div>
-            <div className={styles['benefit-title']}>Analitika i pregled poslovanja</div>
-            <div className={styles['benefit-desc']}>
-              Dobijte uvid u zauzetost, broj zakazanih termina i produktivnost zaposlenih kroz pregledne grafikone i statistiku.
-            </div>
-          </div>
-
-          <div className={`${styles['benefit-card']} anim4`}>
-            <div className={styles['benefit-icon']}><i className="fa-solid fa-bell"></i></div>
-            <div className={styles['benefit-title']}>Automatska obaveštenja</div>
-            <div className={styles['benefit-desc']}>
-              Sistem automatski obaveštava klijente i osoblje o svakom novom terminu, otkazivanju ili izmeni – bez dodatnog napora.
-            </div>
-          </div>
-
-          <div className={`${styles['benefit-card']} anim4`}>
-            <div className={styles['benefit-icon']}><i className="fa-solid fa-lock"></i></div>
-            <div className={styles['benefit-title']}>Sigurnost podataka</div>
-            <div className={styles['benefit-desc']}>
-              Svi podaci su zaštićeni modernim sigurnosnim protokolima kako bi vi i vaši klijenti bili bezbedni u svakom trenutku.
-            </div>
-          </div>
-
-          <div className={`${styles['benefit-card']} anim4`}>
-            <div className={styles['benefit-icon']}><i className="fas fa-headset"></i></div>
-            <div className={styles['benefit-title']}>Lična podrška i pomoć</div>
-            <div className={styles['benefit-desc']}>
-              Naš tim je tu da vam pomogne pri svakom koraku – od podešavanja do svakodnevne upotrebe sistema.
-            </div>
-          </div>
-
+        {/* CATEGORIES */}
+        <div className={styles.categoriesBar}>
+          <button 
+            className={`${styles.categoryBtn} ${activeCategory === 'all' ? styles.active : ''}`}
+            onClick={() => setActiveCategory('all')}
+          >
+            <i className="fa-solid fa-grid-2" style={{ marginRight: '6px' }}></i>
+            Sve
+          </button>
+          {kategorije.map((kat) => (
+            <button 
+              key={kat.id}
+              className={`${styles.categoryBtn} ${activeCategory === String(kat.id) ? styles.active : ''}`}
+              onClick={() => setActiveCategory(String(kat.id))}
+              title={kat.kategorija}
+            >
+              <i className={`${getIconForCategory(kat.kategorija)}`} style={{ marginRight: '6px' }}></i>
+              {kat.kategorija}
+            </button>
+          ))}
         </div>
-      </section>
 
-      
-      <section className={styles['info-between']}>
-        <h2 className='anim2'><br />Rešite sve svoje potrebe za zakazivanje termina na jednom mestu</h2>
-        <p className='anim'>Platforma takođe omogućava upravljanje više poslovnih lokacija, gde svaka može imati svoje radno vreme, zaposlene i usluge. Sve informacije o terminima, zaposlenima i lokacijama nalaze se na jednom mestu, što olakšava svakodnevno upravljanje poslovanjem.</p>
-      </section>
+        {/* LOADING STATE */}
+        {loading && (
+          <div className={styles.loadingGrid}>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className={styles.skeleton}></div>
+            ))}
+          </div>
+        )}
 
-      
+        {/* EMPTY STATE */}
+        {!loading && filteredPreduzeca.length === 0 && (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>
+              <i className="fa-solid fa-search"></i>
+            </div>
+            <h2 className={styles.emptyStateTitle}>Nema rezultata</h2>
+            <p className={styles.emptyStateText}>Pokušaj sa drugom pretragom ili kategorijom</p>
+          </div>
+        )}
 
+        {/* CARDS GRID */}
+        {!loading && filteredPreduzeca.length > 0 && (
+          <div className={styles.cardGrid}>
+            {filteredPreduzeca.map((firma) => (
+              <div 
+                key={firma.id} 
+                className={styles.card}
+                onClick={() => handleCardClick(firma.id)}
+              >
+                {/* IMAGE */}
+                <div className={styles.cardImage}>
+                  {getImageUrl(firma.putanja_za_logo) ? (
+                    <img 
+                      src={getImageUrl(firma.putanja_za_logo)}
+                      alt={firma.ime_preduzeca}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div 
+                    className={styles.cardImageFallback}
+                    style={{ display: getImageUrl(firma.putanja_za_logo) ? 'none' : 'flex' }}
+                  >
+                    <i className="fa-solid fa-briefcase"></i>
+                  </div>
+                  {firma.id_kateg && (
+                    <div className={styles.cardBadge}>
+                      <i className={getIconForCategory(
+                        kategorije.find(k => k.id === firma.id_kateg)?.kategorija || ''
+                      )} style={{ fontSize: '20px' }}></i>
+                    </div>
+                  )}
+                </div>
 
-      <section className={styles['cta-section']}>
-        <div className={styles['zatamni-cta']}></div>
-        <div className={`${styles['cta-content']} anim4`}>
-          <h2>Zainteresovani? Javite se i počnite da zakazujete lako!</h2>
-          <p>Moj Termin prima rezervacije umesto vas – dok vi radite, odmarate ili spavate. <br />
-          Sve funkcioniše automatski: klijenti sami biraju slobodan termin, a vi dobijate obaveštenje. Jednostavno, zar ne?</p>
-          <a href='mailto:info@mojtermin.site'><button className={styles['cta-button']}>Kontaktirajte nas</button></a><br/><br/>
-          <span>Ili isprobajte besplatnu verziju <a href='/login?register=true' style={{color:"#0aadff"}}>kreiranjem naloga</a>.</span>
+                {/* CONTENT */}
+                <div className={styles.cardContent}>
+                  <h3 className={styles.cardTitle}>{firma.ime_preduzeca}</h3>
+                  <p className={styles.cardDescription}>
+                    {firma.opis || 'Profesionalne usluge visokog kvaliteta'}
+                  </p>
+                </div>
+
+                {/* FOOTER */}
+                <div className={styles.cardFooter}>
+                    <p>
+                        {firma.sponzorisano}
+                    </p>
+                    <button className={styles.button}>
+                        Zakaži
+                        <i className="fa-solid fa-arrow-right" style={{ marginLeft: '6px' }}></i>
+                    </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* LOGIN MODAL - Prikazuje se kada korisnik nije prijavljen i klikne na Profil */}
+      {showLoginModal && (
+        <div>
+          <div className={styles.blur}></div>
+          <div className={styles.loginModal}>
+            <h2>Dobrodošli!</h2>
+            <p>Potrebna je prijava da biste pristupili Vašem profilu</p>
+            <div className={styles.loginModalButtons}>
+              <button 
+                className={styles.btn}
+                onClick={() => router.push('/login')}
+              >
+                <i className="fa-solid fa-sign-in-alt" style={{ marginRight: '8px' }}></i>
+                Prijavi se
+              </button>
+              <button 
+                className={styles.btnSecondary}
+                onClick={() => router.push('/login?register=true')}
+              >
+                <i className="fa-solid fa-user-plus" style={{ marginRight: '8px' }}></i>
+                Registruj se
+              </button>
+            </div>
+            <button 
+              className={styles.closeBtn}
+              onClick={() => setShowLoginModal(false)}
+            >
+              <i className="fa-solid fa-times"></i>
+            </button>
+          </div>
         </div>
-      </section>
+      )}
 
-      <section className="ponuda-usluga">
-        <div className="container anim3">
-          <h2>Dodatne usluge</h2>
-          <p>
-            Takođe nudimo i <strong>redizajn postojećih web sajtova</strong>,
-            kao i <strong>izradu novih sajtova</strong> u potpunosti prilagođenih vašim poslovnim ciljevima.
-          </p>
-          <p style={{fontSize:'18px'}}>
-            <br/>
-            Za više informacija i individualnu ponudu, javite na <a href='mailto:jakovljevic.nemanja@outlook.com' style={{color:"#0aadff"}}>jakovljevic.nemanja@outlook.com</a>.
-          </p>
-        </div>
-      </section>
-      
+      <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Footer />
     </div>
   );

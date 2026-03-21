@@ -10,6 +10,6 @@ export default function useLogout() {
     localStorage.removeItem('userId');
     localStorage.removeItem('zakaziForma');
     localStorage.removeItem('zakaziPreduzece');
-    router.push('/login');
+    router.push('/login-preduzeca');
   };
 }

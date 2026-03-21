@@ -38,7 +38,7 @@ export default function BrendPage() {
             const userId = localStorage.getItem("userId");
             if (userId === null) return;
 
-            const res = await fetch(`https://mojtermin.site/api/zakazi/${userId}/forma`);
+            const res = await fetch(`https://test.mojtermin.site/api/zakazi/${userId}/forma`);
             const data = await res.json();
 
             localStorage.setItem('zakaziForma', JSON.stringify(data.forma));
@@ -129,7 +129,7 @@ export default function BrendPage() {
             izgled: selectedDesign
         };
 
-        const res = await fetch(`https://mojtermin.site/api/brend/${userId}`, {
+        const res = await fetch(`https://test.mojtermin.site/api/brend/${userId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -225,18 +225,18 @@ export default function BrendPage() {
                     <div className={styles.linkDiv} onClick={e => e.stopPropagation()}>
                         <div className={styles.qr}>
                             <h3>QR kod za zakazivanje</h3>
-                            <QRCodeSVG value={`https://mojtermin.site/zakazi/${localStorage.getItem('userId')}`} className={styles.qr} ref={qrRef} />
+                            <QRCodeSVG value={`https://test.mojtermin.site/zakazi/${localStorage.getItem('userId')}`} className={styles.qr} ref={qrRef} />
                             <button onClick={preuzmiQRCode} className={styles.copyBtn}>Preuzmi QR kod</button>
                         </div>
 
                         <div className={styles.copyWrapper}>
                             <span className={styles.linkText}>
-                            {`https://mojtermin.site/zakazi/${localStorage.getItem('userId')}`}
+                            {`https://test.mojtermin.site/zakazi/${localStorage.getItem('userId')}`}
                             </span>
                             <button
                             className={styles.copyBtn}
                             onClick={() => {
-                                navigator.clipboard.writeText(`https://mojtermin.site/zakazi/${localStorage.getItem('userId')}`);
+                                navigator.clipboard.writeText(`https://test.mojtermin.site/zakazi/${localStorage.getItem('userId')}`);
                                 toast.success('Link je kopiran.')
                             }}
                             >

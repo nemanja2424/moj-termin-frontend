@@ -1,19 +1,25 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import styles from "./panel.module.css";
 import useLogout from "@/hooks/useLogout";
 
 export default function PanelLayout({ children }) {
   const logout = useLogout();
+  const router = useRouter();
 
   const [rasirenSidebar, setRasirenSidebar] = useState(false);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     const authToken = localStorage.getItem("authToken");
+    const rola = localStorage.getItem("rola");
 
-    if (!userId || !authToken) {
+    if (rola == 3) {
+      router.push("/");
+    }
+    else if (!userId || !authToken) {
       logout();
       return;
     }

@@ -74,7 +74,7 @@ const LoginContent = () => {
       localStorage.setItem('authToken', data.authToken);
       localStorage.setItem('userId', data.id);
       localStorage.setItem('rola', data.rola);
-      window.location.href = '/';
+      window.location.href = '/panel';
     } catch (error) {
       console.error(error);
     } finally {
@@ -181,9 +181,9 @@ const LoginContent = () => {
       "radnika": 0
     }
 
-    setLoading(true)
-    const rola = 3; // Zakazivac rola
-
+    setLoading(true);
+    const rola = 1; // vlasnik rola
+  
     try {
       const res = await fetch('https://test.mojtermin.site/api/auth/signup', {
         method: 'POST',
@@ -202,8 +202,8 @@ const LoginContent = () => {
   
       localStorage.setItem('authToken', data.authToken);
       localStorage.setItem('userId', data.id);
-      localStorage.setItem('rola', 3);
-      window.location.href = '/';  
+      localStorage.setItem('rola', 1);
+      window.location.href = '/panel';  
     } catch (error) {
       if (error.title === "dupliran mejl") {
         toast.error(error.message)
@@ -251,7 +251,7 @@ const LoginContent = () => {
             <div className={styles.cardFront}>
               {/*<Image src={'/Images/login2.jpg'} alt={'cover'} width={1200} height={800} className={styles.loginBg}/>*/}
               <div className={styles.zatamniLogin}></div>
-              <h2>Prijava</h2>
+              <h2>Prijava na panel</h2>
               <form onSubmit={handleLoginSubmit} className={styles.forma}>
                 <div className={styles.formGroup}>
                   <input value={email} onChange={(e) => {setEmail(e.target.value);setEmailError(false);}}
@@ -273,7 +273,7 @@ const LoginContent = () => {
             <div className={styles.cardBack}>
               {/*<Image src={'/Images/login2.jpg'} alt={'cover'} width={1200} height={800} className={styles.loginBg}/>*/}
               <div className={styles.zatamniLogin}></div>
-              <h2>Registracija</h2>
+              <h2>Napravi preduzeca</h2>
               <form onSubmit={handleRegSubmit} className={styles.forma}>
                 <div className={styles.formGroup}>
                   <input type='text' value={ime} onChange={(e) => {setIme(e.target.value)}}

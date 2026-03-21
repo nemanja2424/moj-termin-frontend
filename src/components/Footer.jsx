@@ -10,7 +10,7 @@ const Footer = () => {
         <div className={styles['footer-section']}>
           <a href="/" className={styles.noAnim}>
             <div className={styles.logo} style={{display:'flex',alignItems:'center',marginBottom:'20px'}}>
-            <Image src={'/Images/logo.webp'} alt='logo' width={45} height={45} />
+            <Image src={'/Images/logo3.png'} alt='logo' width={45} height={45} />
               <h3>Moj Termin</h3>
             </div>
           </a>
@@ -21,7 +21,7 @@ const Footer = () => {
           <h4>Navigacija</h4>
           <ul>
             <li><a onClick={() => {redirekt('/panel')}}>Korisnički panel</a></li>
-            <li><a onClick={() => {redirekt('/usluge')}}>Usluge</a></li>
+            <li><a onClick={() => {redirekt('/about')}}>O nama</a></li>
             <li><a onClick={() => {redirekt('/login')}}>Probaj besplatno</a></li>
             <li><a href="/pomoc">Pomoć</a></li>
           </ul>

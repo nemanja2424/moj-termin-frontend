@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import DefaultDesign from "@/components/dizajn/Default";
 import MinimalDesign from "@/components/dizajn/Minimal";
@@ -9,6 +10,8 @@ import MultiStepDesign from "@/components/dizajn/MultiStep";
 import TimelineDesign from "@/components/dizajn/Timeline";
 
 export default function ZakaziPage() {
+    const router = useRouter();
+
     const { id } = useParams();
     const [forma, setForma] = useState({});
     const [preduzece, setPreduzece] = useState({});
@@ -32,7 +35,7 @@ export default function ZakaziPage() {
     const [resetMultiStep, setResetMultiStep] = useState(false);
 
     const fetchData = async () => {
-        const res = await fetch(`https://mojtermin.site/api/zakazi/${id}/forma`);
+        const res = await fetch(`https://test.mojtermin.site/api/zakazi/${id}/forma`);
         if (!res.ok) {
             toast.error('Greška prilikom učitavanja podataka');
             console.log(res);
@@ -101,8 +104,8 @@ export default function ZakaziPage() {
         };
         
         const url = localhost
-            ? 'https://mojtermin.site/api/zakazi'
-            : 'https://mojtermin.site/api/zakazi';
+            ? 'https://test.mojtermin.site/api/zakazi'
+            : 'https://test.mojtermin.site/api/zakazi';
 
         try {
             const res = await fetch(url, {
@@ -117,9 +120,20 @@ export default function ZakaziPage() {
             }
 
             const data = await res.json();
-            toast.success(data.app_response || 'Uspešno zakazano!');
-            resetFormData(); // Reset forma nakon uspešnog zakazivanja
-            fetchData();
+            const rola = localStorage.getItem('rola');
+            
+            if (rola === '1' || rola === '2') {
+              // Ako je zaposleni - prikaži notifikaciju lokalno bez redirekcije
+              toast.success(data.app_response || 'Uspešno zakazano!');
+              resetFormData();
+              fetchData();
+            } else {
+              // Ako nije zaposleni - redirigovaj na početnu stranicu sa porukom
+              const message = encodeURIComponent(data.app_response || 'Uspešno zakazano!');
+              router.push(`/?success=true&message=${message}`);
+            }
+            //resetFormData(); // Reset forma nakon uspešnog zakazivanja
+            //fetchData();
         } catch (error) {
             console.log(error);
         } finally {

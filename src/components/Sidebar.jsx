@@ -30,7 +30,7 @@ export default function Sidebar({ rasirenSidebar, setRasirenSidebar }) {
   return (
     <div className={`${styles.sidebar} ${rasirenSidebar ? '' : styles.skupljen}`}>
       <a onClick={() => redirekt('/panel')}>
-        <Image className={styles.logo} src={"/Images/logo.webp"} alt="logo" width={55} height={55} />
+        <Image className={styles.logo} src={"/Images/logo3.png"} alt="logo" width={55} height={55} />
       </a>
       <nav>
         <Link href={'/panel'}>

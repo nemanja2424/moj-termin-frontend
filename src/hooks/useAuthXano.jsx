@@ -14,7 +14,7 @@ function useAuthXano() {
       }
 
       try {
-        const res = await fetch('https://mojtermin.site/api/auth/provera', {
+        const res = await fetch('https://test.mojtermin.site/api/auth/provera', {
             headers: {
                 Authorization: `Bearer ${authToken}`,
             },
