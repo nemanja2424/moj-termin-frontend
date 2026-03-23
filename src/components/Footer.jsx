@@ -20,9 +20,9 @@ const Footer = () => {
         <div className={styles['footer-section']}>
           <h4>Navigacija</h4>
           <ul>
-            <li><a onClick={() => {redirekt('/panel')}}>Korisnički panel</a></li>
+            <li><a onClick={() => {redirekt('/panel')}}>Preduzetnički panel</a></li>
             <li><a onClick={() => {redirekt('/about')}}>O nama</a></li>
-            <li><a onClick={() => {redirekt('/login')}}>Probaj besplatno</a></li>
+            <li><a onClick={() => {redirekt('/login-preduzeca?register=true')}}>Probaj besplatno</a></li>
             <li><a href="/pomoc">Pomoć</a></li>
           </ul>
         </div>

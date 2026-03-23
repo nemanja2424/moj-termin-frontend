@@ -106,7 +106,37 @@ export default function PodesavanjaPage() {
         { vrednost: 240, prikaz: "4 sata" },
     ];
 
+    // Mapping kategorija na ikone
+    const categoryIconMap = {
+        'Auto servisi': 'fa-solid fa-car-on',
+        'Tehnički pregledi': 'fa-solid fa-car',
+        'Zdravstvene klinike': 'fa-solid fa-stethoscope',
+        'Veterinarske klinike': 'fa-solid fa-shield-dog',
+        'Stomatološke klinike': 'fa-solid fa-tooth',
+        'Beauty': 'fa-solid fa-spa',
+        'Frizerski saloni': 'fa-solid fa-scissors',
+        'Masaža': 'fa-solid fa-hand',
+        'Fitness': 'fa-solid fa-dumbbell',
+        'Sportski tereni': 'fa-solid fa-basketball',
+        'Frizer': 'fa-solid fa-scissors',
+        'Zdravlje': 'fa-solid fa-stethoscope',
+        'Zdravstvena zaštita': 'fa-solid fa-stethoscope',
+        'Lepota': 'fa-solid fa-spa',
+        'Teretana': 'fa-solid fa-dumbbell',
+        'Restorani': 'fa-solid fa-utensils',
+        'Restoran': 'fa-solid fa-utensils',
+        'Fotografija': 'fa-solid fa-camera',
+        'Fotografija i video': 'fa-solid fa-camera',
+        'Salon': 'fa-solid fa-chair',
+        'Zubni lekar': 'fa-solid fa-tooth',
+        'Veterinar': 'fa-solid fa-paw',
+        'Obuka': 'fa-solid fa-graduation-cap',
+        'Sastanci': 'fa-solid fa-envelopes-bulk',
+    };
 
+    const getIconForCategory = (categoryName) => {
+        return categoryIconMap[categoryName] || 'fa-solid fa-briefcase';
+    };
 
     const handleEditUsernameClick = () => {
         setEditingUsername(true);
@@ -504,7 +534,7 @@ export default function PodesavanjaPage() {
     };
 
     const handleAddService = () => {
-        if (!novaUsluga_cena || !novaUsluga_naziv || !novaUsluga_trajanje) {
+        if (novaUsluga_cena === '' || !novaUsluga_naziv || !novaUsluga_trajanje) {
             toast.error('Popunite sva polja.');
             return;
         }
@@ -537,7 +567,7 @@ export default function PodesavanjaPage() {
     };
 
     const handleSaveEditService = (index) => {
-        if (!editingServiceData.cena || !editingServiceData.usluga || !editingServiceData.trajanje) {
+        if (editingServiceData.cena === '' || editingServiceData.cena === null || editingServiceData.cena === undefined || !editingServiceData.usluga || !editingServiceData.trajanje) {
             toast.error('Popunite sva polja.');
             return;
         }
@@ -915,16 +945,20 @@ export default function PodesavanjaPage() {
                             >
                                 <option value="">Izaberi kategoriju</option>
                                 {kategorije.map((kat) => (
-                                    <option key={kat.id} value={kat.id}>{kat.kategorija}</option>
+                                    <option key={kat.id} value={kat.id}>
+                                        {kat.kategorija}
+                                    </option>
                                 ))}
                             </select>
-                            <i className={`${stylesLogin.inputIcon2} fa-solid fa-list-ul`}></i>
+                            <i className={`${stylesLogin.inputIcon2} ${getIconForCategory(
+                                kategorije.find(k => k.id == korisnik.id_kateg)?.kategorija || 'kategorija'
+                            )}`}></i>
                         </div>
                         <div className={stylesLogin.formGroup}>
                             <MarkdownEditor 
                                 value={korisnik.opis || ''} 
                                 onChange={(e) => { 
-                                    const opis = e.target.value.slice(0, 150);
+                                    const opis = e.target.value.slice(0, 2000);
                                     setKorisnik({...korisnik, opis}) 
                                 }}
                                 placeholder='Opis preduzeća'
@@ -1135,8 +1169,9 @@ export default function PodesavanjaPage() {
                                                             <input
                                                                 type="number"
                                                                 placeholder="Cena (RSD)"
-                                                                value={editingServiceData.cena || ''}
-                                                                onChange={(e) => setEditingServiceData({...editingServiceData, cena: parseInt(e.target.value) || 0})}
+                                                                min={0}
+                                                                value={editingServiceData.cena ?? ''}
+                                                                onChange={(e) => setEditingServiceData({...editingServiceData, cena: e.target.value === '' ? '' : parseInt(e.target.value)})}
                                                                 className={styles.cenovnikInput}
                                                             />
                                                             <select

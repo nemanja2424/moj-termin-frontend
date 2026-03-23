@@ -100,7 +100,7 @@
   gap: 12px;
   margin-bottom: 30px;
   border-bottom: 2px solid #e5e7eb;
-  overflow-x: hidden;
+  overflow: hidden;
   flex-wrap: wrap;
   box-sizing: border-box;
   width: 100%;

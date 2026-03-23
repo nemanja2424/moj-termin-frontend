@@ -166,7 +166,7 @@ export default function AboutPage() {
           <p>Moj Termin prima rezervacije umesto vas – dok vi radite, odmarate ili spavate. <br />
           Sve funkcioniše automatski: klijenti sami biraju slobodan termin, a vi dobijate obaveštenje. Jednostavno, zar ne?</p>
           <a href='mailto:info@mojtermin.site'><button className={styles['cta-button']}>Kontaktirajte nas</button></a><br/><br/>
-          <span>Ili isprobajte besplatnu verziju <a href='/login?register=true' style={{color:"#0aadff"}}>kreiranjem naloga</a>.</span>
+          <span>Ili isprobajte besplatnu verziju <a href='/login-preduzeca?register=true' style={{color:"#0aadff"}}>kreiranjem naloga</a>.</span>
         </div>
       </section>
 

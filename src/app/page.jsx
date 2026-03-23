@@ -134,22 +134,30 @@ function HomePageContent() {
   // Mapping kategorija na ikone
   const categoryIconMap = {
     'Frizer': 'fa-solid fa-scissors',
-    'Frizerski': 'fa-solid fa-scissors',
     'Zdravlje': 'fa-solid fa-stethoscope',
     'Zdravstvena zaštita': 'fa-solid fa-stethoscope',
     'Lepota': 'fa-solid fa-spa',
-    'Beauty': 'fa-solid fa-spa',
-    'Fitness': 'fa-solid fa-dumbbell',
     'Teretana': 'fa-solid fa-dumbbell',
     'Restorani': 'fa-solid fa-utensils',
     'Restoran': 'fa-solid fa-utensils',
     'Fotografija': 'fa-solid fa-camera',
     'Fotografija i video': 'fa-solid fa-camera',
     'Salon': 'fa-solid fa-chair',
-    'Masaža': 'fa-solid fa-hand',
     'Zubni lekar': 'fa-solid fa-tooth',
     'Veterinar': 'fa-solid fa-paw',
     'Obuka': 'fa-solid fa-graduation-cap',
+    
+    'Auto servisi': 'fa-solid fa-car-on',
+    'Tehnički pregledi': 'fa-solid fa-car',
+    'Zdravstvene klinike': 'fa-solid fa-stethoscope',
+    'Veterinarske klinike': 'fa-solid fa-shield-dog',
+    'Stomatološke klinike': 'fa-solid fa-tooth',
+    'Beauty': 'fa-solid fa-spa',
+    'Frizerski saloni': 'fa-solid fa-scissors',
+    'Masaža': 'fa-solid fa-hand',
+    'Fitness': 'fa-solid fa-dumbbell',
+    'Sportski tereni': 'fa-solid fa-basketball',
+    'Sastanci': 'fa-solid fa-envelopes-bulk',
   };
 
   const getIconForCategory = (categoryName) => {
@@ -326,9 +334,13 @@ function HomePageContent() {
                 {/* CONTENT */}
                 <div className={styles.cardContent}>
                   <h3 className={styles.cardTitle}>{firma.ime_preduzeca}</h3>
-                  <p className={styles.cardDescription}>
-                    {firma.opis || 'Profesionalne usluge visokog kvaliteta'}
-                  </p>
+                  <div className={styles.cardDescription}>
+                    {firma.opis ? (
+                      <div dangerouslySetInnerHTML={{ __html: firma.opis }} />
+                    ) : (
+                      <p>Profesionalne usluge visokog kvaliteta</p>
+                    )}
+                  </div>
                 </div>
 
                 {/* FOOTER */}

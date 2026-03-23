@@ -56,7 +56,7 @@ export default function PotvrdiPage() {
                 </div>
             )}
             {terminPotvrdjen && (<h3>Uspešno ste potvrdili termin</h3>)}
-            {terminPotvrdjen === false && (<><h3>Termin nije potvrđen, probajte ručno.</h3><a href="/panel/termini"> Korisnički panel</a></>)}
+            {terminPotvrdjen === false && (<><h3>Termin nije potvrđen, probajte ručno.</h3><a href="/panel/termini"> Preduzetnički panel</a></>)}
         </main>
     )
 }

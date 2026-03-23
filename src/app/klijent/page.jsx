@@ -214,7 +214,9 @@ export default function KlijentPage() {
       <div className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.logo}>
-            <img src="/images/logo3.png" alt="Moj Termin" />
+            <a href="/">
+              <img src="/Images/logo3.png" alt="Moj Termin" />
+            </a>
           </div>
           <h1>Moj Profil</h1>
           <div className={styles.headerActions}>

@@ -9,7 +9,7 @@ export default function useRedirekt() {
   return (putanja) => {
     const authToken = localStorage.getItem('authToken');
     if (putanja === '/panel' && !authToken) {
-      router.push('/login');
+      router.push('/login-preduzeca');
     } else {
       router.push(putanja);
       console.log('/panel')
