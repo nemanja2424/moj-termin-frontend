@@ -155,7 +155,7 @@ export default function PodesavanjaPage() {
         setLoadingPotvrdi(true);
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch(`https://test.mojtermin.site/api/podesavanja/user/${userId}`, {
+        const res = await fetch(`https://mojtermin.site/api/podesavanja/user/${userId}`, {
             method: 'PATCH',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
@@ -195,7 +195,7 @@ export default function PodesavanjaPage() {
         }
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch(`https://test.mojtermin.site/api/podesavanja/nova-lozinka/${userId}`, {
+        const res = await fetch(`https://mojtermin.site/api/podesavanja/nova-lozinka/${userId}`, {
             method: 'PATCH',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
@@ -224,7 +224,7 @@ export default function PodesavanjaPage() {
         const authToken = localStorage.getItem('authToken');
         const cenovnik = korisnik.cenovnik || []; 
         const radno_vreme = korisnik.radnoVreme || {};
-        const res = await fetch(`https://test.mojtermin.site/api/podesavanja/dodaj-lokaciju/${userId}`, {
+        const res = await fetch(`https://mojtermin.site/api/podesavanja/dodaj-lokaciju/${userId}`, {
             method:'POST',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
@@ -248,7 +248,7 @@ export default function PodesavanjaPage() {
     const handleConfirmEdit = async (firmaId) => {
         setLoadingPotvrdi(true);
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch(`https://test.mojtermin.site/api/podesavanja/izmeni-lokaciju/${firmaId}`, {
+        const res = await fetch(`https://mojtermin.site/api/podesavanja/izmeni-lokaciju/${firmaId}`, {
         method:'PATCH',
         headers:{
             'Authorization': `Bearer ${authToken}`,
@@ -287,7 +287,7 @@ export default function PodesavanjaPage() {
         formData.append('file', file);
     
         try {
-            const response = await fetch('https://test.mojtermin.site/api/novi_logo', {
+            const response = await fetch('https://mojtermin.site/api/novi_logo', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${authToken}`,
@@ -359,7 +359,7 @@ export default function PodesavanjaPage() {
 
     const fetchData = async () => {
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch('https://test.mojtermin.site/api/auth/me', {
+        const res = await fetch('https://mojtermin.site/api/auth/me', {
             method: 'GET',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
@@ -398,7 +398,7 @@ export default function PodesavanjaPage() {
     useEffect(() => {
         const userId = localStorage.getItem('userId');
         if (userId) {
-            setBookingLink(`https://test.mojtermin.site/zakazi/${userId}`);
+            setBookingLink(`https://mojtermin.site/zakazi/${userId}`);
         }
         fetchData();
     }, []);
@@ -482,7 +482,7 @@ export default function PodesavanjaPage() {
         const authToken = localStorage.getItem('authToken');
 
         try{
-            const response = await fetch(`https://test.mojtermin.site/api/podesavanja/radno-vreme`, {
+            const response = await fetch(`https://mojtermin.site/api/podesavanja/radno-vreme`, {
                 method: 'PATCH',
                 headers:{
                     'Authorization': `Bearer ${authToken}`,
@@ -591,7 +591,7 @@ export default function PodesavanjaPage() {
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
         try{
-            const response = await fetch(`https://test.mojtermin.site/api/podesavanja/cenovnik`, {
+            const response = await fetch(`https://mojtermin.site/api/podesavanja/cenovnik`, {
                 method: 'PATCH',
                 headers:{
                     'Authorization': `Bearer ${authToken}`,
@@ -819,7 +819,7 @@ export default function PodesavanjaPage() {
                     <button onClick={handleButtonClickLogo} className={styles.btn} style={{width:'120px', textAlign:'center'}}>Izmeni logo</button>
                     <input type="file" accept="image/*" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} />
                 </div>
-                <img loading='lazy' src={korisnik.putanja_za_logo === '/Images/logo3.png' ? '/Images/logo3.png' : `https://test.mojtermin.site/api/logo/${korisnik.putanja_za_logo}`} />
+                <img loading='lazy' src={korisnik.putanja_za_logo === '/Images/logo3.png' ? '/Images/logo3.png' : `https://mojtermin.site/api/logo/${korisnik.putanja_za_logo}`} />
             </div>
             <div className={`${styles.stavka} ${styles.firme}`} style={{flexDirection:'column', alignItems:'center'}}>
                 <h2>Moje lokacije</h2>

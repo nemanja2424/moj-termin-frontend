@@ -1,0 +1,38 @@
+# MojTermin robots.txt - SEO optimizovano
+
+# Dozvoli svim search engine crawlers
+User-agent: *
+Allow: /
+Disallow: /panel/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /login
+Disallow: /login-preduzeca
+Disallow: /*?*sort=
+Disallow: /*?*page=
+Disallow: /preview/
+
+# Google Bot - dopusti dublje crawling
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Bing Bot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Yandex Bot
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 1
+
+# Za sve ostale - malo sporije
+User-agent: *
+Crawl-delay: 2
+Request-rate: 30/60
+
+# Sitemap lokacija
+Sitemap: https://mojtermin.site/sitemap.xml
+Sitemap: https://mojtermin.site/sitemap-0.xml

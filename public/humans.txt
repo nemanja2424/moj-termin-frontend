@@ -1,0 +1,14 @@
+/* TEAM */
+  Title: MojTermin Development Team
+  Site: https://mojtermin.site
+
+/* THANKS */
+  Name: Google
+  Name: Next.js
+  Name: React
+
+/* SITE */
+  Language: sr
+  Doctype: HTML5
+  IDE: VS Code
+  Framework: Next.js 15
