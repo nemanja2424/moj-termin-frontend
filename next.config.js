@@ -75,9 +75,6 @@ const nextConfig = {
     minimumCacheTTL: 31536000,
   },
 
-  // Minifikacija i optimizacija
-  swcMinify: true,
-
   // Prebacivanje sa trailingSlash-a
   trailingSlash: false,
 
