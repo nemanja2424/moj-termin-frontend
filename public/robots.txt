@@ -34,5 +34,5 @@ Crawl-delay: 2
 Request-rate: 30/60
 
 # Sitemap lokacija
-Sitemap: https://mojtermin.site/sitemap.xml
-Sitemap: https://mojtermin.site/sitemap-0.xml
+Sitemap: https://test.mojtermin.site/sitemap.xml
+Sitemap: https://test.mojtermin.site/sitemap-0.xml

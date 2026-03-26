@@ -10,7 +10,7 @@ export default function PotvrdiPage() {
     
     const potvrdiTermin = async () => {
         try {
-            const res = await fetch(`https://mojtermin.site/api/zakazivanja/${token}/xrdcytfuvgbhjnkjhbgvyftucdyrxtsezxrdcytfuvy`, {
+            const res = await fetch(`https://test.mojtermin.site/api/zakazivanja/${token}/xrdcytfuvgbhjnkjhbgvyftucdyrxtsezxrdcytfuvy`, {
                 method: "PATCH", // ili PUT, PATCH ako je drugačije specificirano
                 headers: {
                     "Content-Type": "application/json"

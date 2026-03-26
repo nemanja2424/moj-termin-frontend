@@ -7,8 +7,8 @@ export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "MojTermin",
-  url: "https://mojtermin.site",
-  logo: "https://mojtermin.site/Images/logo3.png",
+  url: "https://test.mojtermin.site",
+  logo: "https://test.mojtermin.site/Images/logo3.png",
   description:
     "MojTermin je moderan sistem za digitalno zakazivanje termina. Platform za lekarske preglede, salone, i sve vrste usluga sa mogućnostima upravljanja za preduzeca.",
   sameAs: [
@@ -35,8 +35,8 @@ export const localBusinessSchema = {
   name: "MojTermin",
   description:
     "Online platforma za zakazivanje termina i pregleda u Srbiji",
-  url: "https://mojtermin.site",
-  logo: "https://mojtermin.site/Images/logo3.png",
+  url: "https://test.mojtermin.site",
+  logo: "https://test.mojtermin.site/Images/logo3.png",
   telephone: "+381",
   areaServed: "RS",
   serviceType: [
@@ -45,7 +45,7 @@ export const localBusinessSchema = {
     "Upravljanje salonima",
     "Digitalni kalendar termina",
   ],
-  image: "https://mojtermin.site/Images/og-image.jpg",
+  image: "https://test.mojtermin.site/Images/og-image.jpg",
 };
 
 export const softwareApplicationSchema = {
@@ -54,7 +54,7 @@ export const softwareApplicationSchema = {
   name: "MojTermin",
   description:
     "Aplikacija za zakazivanje termina i upravljanje poslovanjem. Dostupna za web, iOS i Android.",
-  url: "https://mojtermin.site",
+  url: "https://test.mojtermin.site",
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web, iOS, Android",
   offers: {
@@ -70,7 +70,7 @@ export const softwareApplicationSchema = {
     bestRating: "5",
     worstRating: "1",
   },
-  image: "https://mojtermin.site/Images/logo3.png",
+  image: "https://test.mojtermin.site/Images/logo3.png",
   author: {
     "@type": "Organization",
     name: "MojTermin",
@@ -85,7 +85,7 @@ export const serviceSchema = (name, description, benefits) => ({
   provider: {
     "@type": "Organization",
     name: "MojTermin",
-    url: "https://mojtermin.site",
+    url: "https://test.mojtermin.site",
   },
   areaServed: "RS",
   hasOfferCatalog: {
@@ -141,7 +141,7 @@ export const articleSchema = (
     name: "MojTermin",
     logo: {
       "@type": "ImageObject",
-      url: "https://mojtermin.site/Images/logo3.png",
+      url: "https://test.mojtermin.site/Images/logo3.png",
     },
   },
 });
@@ -154,7 +154,7 @@ export const mainServicesSchema = [
     name: "Online zakazivanje lekarskih pregleda",
     description:
       "Brzo i jednostavno zakazivanje termina kod doktora. Bez čekanja i telefonskih poziva.",
-    url: "https://mojtermin.site",
+    url: "https://test.mojtermin.site",
   },
   {
     "@context": "https://schema.org",
@@ -162,7 +162,7 @@ export const mainServicesSchema = [
     name: "Upravljanje terminima za preduzeća",
     description:
       "Kompletna platforma za upravljanje radnim vremenima, zaposlenima, i terminima.",
-    url: "https://mojtermin.site/panel",
+    url: "https://test.mojtermin.site/panel",
   },
   {
     "@context": "https://schema.org",
@@ -170,6 +170,6 @@ export const mainServicesSchema = [
     name: "Statistika i analitika poslovanja",
     description:
       "Detaljne statistike, grafici i pregled performansi vašeg poslovanja.",
-    url: "https://mojtermin.site/panel",
+    url: "https://test.mojtermin.site/panel",
   },
 ];

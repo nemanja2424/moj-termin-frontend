@@ -4,7 +4,7 @@
  */
 
 export default function sitemap() {
-  const baseUrl = "https://mojtermin.site";
+  const baseUrl = "https://test.mojtermin.site";
 
   // Glavne stranice - uvek dostupne
   const staticPages = [

@@ -50,7 +50,7 @@ export default function KlijentPage() {
   const fetchUserData = async (userId) => {
     try {
       const authToken = localStorage.getItem('authToken');
-      const response = await fetch(`https://mojtermin.site/api/klijent/${userId}`, {
+      const response = await fetch(`https://test.mojtermin.site/api/klijent/${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -104,7 +104,7 @@ export default function KlijentPage() {
       const authToken = localStorage.getItem('authToken');
       const userId = localStorage.getItem('userId');
 
-      const response = await fetch(`https://mojtermin.site/api/klijent/${userId}`, {
+      const response = await fetch(`https://test.mojtermin.site/api/klijent/${userId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -164,7 +164,7 @@ export default function KlijentPage() {
       const authToken = localStorage.getItem('authToken');
       const userId = localStorage.getItem('userId');
 
-      const response = await fetch(`https://mojtermin.site/api/klijent/${userId}/lozinka`, {
+      const response = await fetch(`https://test.mojtermin.site/api/klijent/${userId}/lozinka`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${authToken}`,

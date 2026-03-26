@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  metadataBase: new URL("https://mojtermin.site"),
+  metadataBase: new URL("https://test.mojtermin.site"),
 
   title: {
     default: "MojTermin – Online zakazivanje termina i pregleda u Srbiji",
@@ -52,9 +52,9 @@ export const metadata = {
   },
 
   alternates: {
-    canonical: "https://mojtermin.site",
+    canonical: "https://test.mojtermin.site",
     languages: {
-      "sr-RS": "https://mojtermin.site",
+      "sr-RS": "https://test.mojtermin.site",
     },
   },
 
@@ -72,7 +72,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     locale: "sr_RS",
-    url: "https://mojtermin.site",
+    url: "https://test.mojtermin.site",
     siteName: "MojTermin",
     title: "MojTermin – Online zakazivanje termina i pregleda u Srbiji",
     description:
@@ -119,8 +119,8 @@ export default function RootLayout({ children }) {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "MojTermin",
-    url: "https://mojtermin.site",
-    logo: "https://mojtermin.site/Images/logo3.png",
+    url: "https://test.mojtermin.site",
+    logo: "https://test.mojtermin.site/Images/logo3.png",
     description:
       "Moderan sistem za digitalno zakazivanje termina i upravljanje poslovanjem",
     sameAs: [
@@ -147,7 +147,7 @@ export default function RootLayout({ children }) {
     name: "MojTermin",
     description:
       "Aplikacija za zakazivanje termina. Dostupna za web, iOS i Android.",
-    url: "https://mojtermin.site",
+    url: "https://test.mojtermin.site",
     applicationCategory: "BusinessApplication",
     operatingSystem: "Web, iOS, Android",
     offers: {
