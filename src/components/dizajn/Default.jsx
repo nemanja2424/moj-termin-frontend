@@ -30,7 +30,7 @@ export default function DefaultDesign({
     setFormData((prev) => ({
       ...prev,
       usluga: selectedUsluga,
-      vreme: ''
+      vreme: '' // Resetuj vreme samo ako korisnik AKTIVNO menja uslugu
     }));
   };
 
@@ -137,7 +137,10 @@ export default function DefaultDesign({
     const endTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), endHour, endMin, 0, 0);
 
     const selectedDateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-    const zauzeti = (zauzetiTermini || []).filter(z => z.datum_rezervacije === selectedDateStr);
+    // Isključi trenutni termin iz zauzeti ako se editujem (ako ima ID-a)
+    const zauzeti = (zauzetiTermini || []).filter(z => 
+      z.datum_rezervacije === selectedDateStr && z.id !== formData.id
+    );
 
     // Pribavi overlapLimit (default je 1 ako nije definisan)
     const overlapLimit = selectedLokacija?.overlapLimit || 1;
@@ -199,13 +202,18 @@ export default function DefaultDesign({
 
   // Postavi odabrani dan i automatski popuni formData
   const handleCalendarDayClick = (date) => {
+    const isSameDay = selectedCalendarDate && 
+      selectedCalendarDate.getFullYear() === date.getFullYear() &&
+      selectedCalendarDate.getMonth() === date.getMonth() &&
+      selectedCalendarDate.getDate() === date.getDate();
+    
     setSelectedCalendarDate(date);
     setFormData((prev) => ({
       ...prev,
       dan: date.getDate(),
       mesec: date.getMonth(),
       godina: date.getFullYear(),
-      vreme: ''
+      vreme: isSameDay ? prev.vreme : '' // Samo resetuj vreme ako je novi datum
     }));
   };
 

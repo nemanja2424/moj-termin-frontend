@@ -132,6 +132,7 @@ export default function PodesavanjaPage() {
         'Veterinar': 'fa-solid fa-paw',
         'Obuka': 'fa-solid fa-graduation-cap',
         'Sastanci': 'fa-solid fa-envelopes-bulk',
+        'Grooming': 'fa-solid fa-dog',
     };
 
     const getIconForCategory = (categoryName) => {

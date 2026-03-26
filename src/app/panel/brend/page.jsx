@@ -185,7 +185,7 @@ export default function BrendPage() {
                 <>
                     <div style={{ display: 'flex', gap: '10px', padding: '10px' }}>
                         <button onClick={() => {setSelectedDesign('default'); console.log(selectedDesign)}} className={styles.button2}>Default</button>
-                        <button onClick={() => {setSelectedDesign('minimal'); console.log(selectedDesign)}} className={styles.button2}>Minimal</button>
+                        {/*<button onClick={() => {setSelectedDesign('minimal'); console.log(selectedDesign)}} className={styles.button2}>Minimal</button>*/}
                         <button onClick={() => {setSelectedDesign('multistep'); console.log(selectedDesign)}} className={styles.button2}>MultiStep</button>
                         <button onClick={() => {setSelectedDesign('timeline'); console.log(selectedDesign)}} className={styles.button2}>Timeline</button>
                     </div>

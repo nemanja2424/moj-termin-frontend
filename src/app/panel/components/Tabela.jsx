@@ -18,10 +18,27 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
   const [createdFrom, setCreatedFrom] = useState('');
   const [createdTo, setCreatedTo] = useState('');
 
+  // Normalizuj podatke - razmotuaj ako je niz nizova
+  const normalizeData = (data) => {
+    if (!Array.isArray(data)) return [];
+    
+    // Ako je niz nizova, razmotuaj ga
+    if (data.length > 0 && Array.isArray(data[0])) {
+      return data.flat();
+    }
+    return data;
+  };
 
   useEffect(() => {
       if (desavanjaData && desavanjaData.length > 0) {
-          const sortirano = [...desavanjaData].sort((a, b) => b.id - a.id);
+          const normalized = normalizeData(desavanjaData);
+          // Mapira polja da budu kompatibilna sa komponentom
+          const mapped = normalized.map(event => ({
+            ...event,
+            ime_firme: event.ime_lokacije || event.lokacija?.ime || '-',
+            datum: event.datum_rezervacije || event.datum
+          }));
+          const sortirano = [...mapped].sort((a, b) => b.id - a.id);
           setDesavanja(sortirano);
       }
       let rolaInt = localStorage.getItem('rola');
@@ -82,7 +99,13 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
 
 
   useEffect(() => {
-    let sortirano = [...desavanjaData];
+    let normalized = normalizeData(desavanjaData);
+    let mapped = normalized.map(event => ({
+      ...event,
+      ime_firme: event.ime_lokacije || event.lokacija?.ime || '-',
+      datum: event.datum_rezervacije || event.datum
+    }));
+    let sortirano = [...mapped];
 
     if (sortKey) {
       sortirano.sort((a, b) => {
@@ -130,34 +153,36 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
     if (statusFilter === 'nije_potvrdjen') {
       statusOk = event.potvrdio === null && !event.otkazano;
     } else if (statusFilter === 'potvrdjen') {
-      statusOk = event.potvrdio !== 0 && !event.otkazano;
+      statusOk = event.potvrdio !== null && event.potvrdio !== 0 && !event.otkazano;
     } else if (statusFilter === 'otkazan') {
       statusOk = event.otkazano;
     }
 
-    // Filtriranje po datumu
-    if (dateFrom) {
-      datumOk = event.datum >= dateFrom;
+    // Filtriranje po datumu (koristi datum ili datum_rezervacije)
+    const eventDatum = event.datum || event.datum_rezervacije;
+    if (dateFrom && eventDatum) {
+      datumOk = eventDatum >= dateFrom;
     }
-    if (datumOk && dateTo) {
-      datumOk = event.datum <= dateTo;
+    if (datumOk && dateTo && eventDatum) {
+      datumOk = eventDatum <= dateTo;
     }
 
     // Filtriranje po lokaciji
     if (lokacijaFilter) {
-      lokacijaOk = String(event.ime_firme) === lokacijaFilter;
+      const eventLokacija = event.ime_firme || event.ime_lokacije || event.lokacija?.ime;
+      lokacijaOk = String(eventLokacija) === lokacijaFilter;
     }
 
-    // Created_at filter
+    // Created_at filter - parsira HTTP datum format (Wed, 25 Mar 2026 17:46:31 GMT)
     let createdDate = '';
     if (event.created_at) {
-      if (typeof event.created_at === 'string') {
-        createdDate = event.created_at.split('T')[0];
-      } else {
+      try {
         const d = new Date(event.created_at);
-        if (!isNaN(d)) {
+        if (!isNaN(d.getTime())) {
           createdDate = d.toISOString().split('T')[0];
         }
+      } catch (e) {
+        createdDate = '';
       }
     }
     if (createdFrom && createdDate && createdDate < createdFrom) createdOk = false;
@@ -166,10 +191,21 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
 
     return statusOk && datumOk && lokacijaOk && createdOk;
   });
-  // Helper da konvertuješ string yyyy-mm-dd u Date objekat (ako ti su ti dateFrom itd. stringovi)
-  const toDate = (str) => (str ? new Date(str) : null);
-  // Helper da konvertuješ Date u string yyyy-mm-dd kad šalješ na backend (ako treba)
-  const toString = (date) => (date ? date.toISOString().split("T")[0] : "");
+  // Helper da konvertuješ string yyyy-mm-dd u Date objekat (koristi lokalno vreme, ne UTC)
+  const toDate = (str) => {
+    if (!str) return null;
+    const [year, month, day] = str.split('-');
+    return new Date(year, month - 1, day);
+  };
+  
+  // Helper da konvertuješ Date u string yyyy-mm-dd (koristi lokalno vreme, ne UTC)
+  const toString = (date) => {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
 
 
@@ -201,8 +237,8 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
             Lokacija:
             <select value={lokacijaFilter} onChange={e => setLokacijaFilter(e.target.value)}>
               <option value="">Sve</option>
-              {Array.isArray(desavanjaData) && [...new Set(desavanjaData.map(d => d.ime_firme))]
-                .filter(id => id !== null && id !== undefined)
+              {Array.isArray(desavanja) && [...new Set(desavanja.map(d => d.ime_firme))]
+                .filter(id => id !== null && id !== undefined && id !== '-')
                 .map(id => (
                   <option key={id} value={id}>
                     {id}
@@ -215,42 +251,90 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
         
         <label>
           Datum termina (od):
-          <DatePicker
-            selected={toDate(dateFrom)}
-            onChange={(date) => setDateFrom(toString(date))}
-            dateFormat="dd/MM/yyyy"
-            placeholderText="dd/mm/yyyy"
-          />
+          <div className={styles.datePickerWrapper}>
+            <DatePicker
+              selected={toDate(dateFrom)}
+              onChange={(date) => setDateFrom(toString(date))}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="dd/mm/yyyy"
+            />
+            {dateFrom && (
+              <button 
+                type="button"
+                className={styles.clearBtn} 
+                onClick={() => setDateFrom('')}
+                title="Obriši datum"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </label>
 
         <label>
           Datum termina (do):
-          <DatePicker
-            selected={toDate(dateTo)}
-            onChange={(date) => setDateTo(toString(date))}
-            dateFormat="dd/MM/yyyy"
-            placeholderText="dd/mm/yyyy"
-          />
+          <div className={styles.datePickerWrapper}>
+            <DatePicker
+              selected={toDate(dateTo)}
+              onChange={(date) => setDateTo(toString(date))}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="dd/mm/yyyy"
+            />
+            {dateTo && (
+              <button 
+                type="button"
+                className={styles.clearBtn} 
+                onClick={() => setDateTo('')}
+                title="Obriši datum"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </label>
 
         <label>
           Datum zakazivanja (od):
-          <DatePicker
-            selected={toDate(createdFrom)}
-            onChange={(date) => setCreatedFrom(toString(date))}
-            dateFormat="dd/MM/yyyy"
-            placeholderText="dd/mm/yyyy"
-          />
+          <div className={styles.datePickerWrapper}>
+            <DatePicker
+              selected={toDate(createdFrom)}
+              onChange={(date) => setCreatedFrom(toString(date))}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="dd/mm/yyyy"
+            />
+            {createdFrom && (
+              <button 
+                type="button"
+                className={styles.clearBtn} 
+                onClick={() => setCreatedFrom('')}
+                title="Obriši datum"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </label>
 
         <label>
           Datum zakazivanja (do):
-          <DatePicker
-            selected={toDate(createdTo)}
-            onChange={(date) => setCreatedTo(toString(date))}
-            dateFormat="dd/MM/yyyy"
-            placeholderText="dd/mm/yyyy"
-          />
+          <div className={styles.datePickerWrapper}>
+            <DatePicker
+              selected={toDate(createdTo)}
+              onChange={(date) => setCreatedTo(toString(date))}
+              dateFormat="dd/MM/yyyy"
+              placeholderText="dd/mm/yyyy"
+            />
+            {createdTo && (
+              <button 
+                type="button"
+                className={styles.clearBtn} 
+                onClick={() => setCreatedTo('')}
+                title="Obriši datum"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </label>
       </div>
 

@@ -46,6 +46,30 @@ export default function ZakaziPage() {
         setForma(data.forma);
         setPreduzece(data);
 
+        // Ako je rola 3, preuzmi podatke klijenta
+        const rola = localStorage.getItem('rola');
+        if (rola === '3') {
+            try {
+                const klijentRes = await fetch(`https://mojtermin.site/api/klijent/${id}`);
+                if (klijentRes.ok) {
+                    const klijentData = await klijentRes.json();
+                    const klijent = klijentData.klijent;
+                    
+                    // Preuzmi samo brojeve iz brTel (bez +381)
+                    const telefonBroj = klijent.brTel.replace(/\D/g, '').slice(3); // Uklanja +381
+                    
+                    setFormData((prev) => ({
+                        ...prev,
+                        ime: klijent.username || '',
+                        email: klijent.email || '',
+                        telefon: '+381' + telefonBroj
+                    }));
+                }
+            } catch (error) {
+                console.error('Greška pri učitavanju podataka klijenta:', error);
+            }
+        }
+
         if (data.paket === "Personalni"){
             // === Zakazano ovog meseca ===
             const today = new Date();

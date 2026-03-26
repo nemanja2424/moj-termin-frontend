@@ -48,8 +48,18 @@ export default function IzmeniZakaziPage() {
             return;
         }
         const data = await res.json();
-        setPreduzece(data.preduzece);
-        setForma(data.preduzece.forma);
+        
+        // Mapiraj duzina_termina -> cenovnik za kompatibilnost sa komponentom
+        const processedPreduzece = {
+          ...data.preduzece,
+          lokacije: data.preduzece.lokacije?.map(lok => ({
+            ...lok,
+            cenovnik: lok.duzina_termina || lok.cenovnik
+          })) || []
+        };
+        
+        setPreduzece(processedPreduzece);
+        setForma(processedPreduzece.forma);
 
         let termin = { ...data.termin };
         if (termin.datum_rezervacije) {

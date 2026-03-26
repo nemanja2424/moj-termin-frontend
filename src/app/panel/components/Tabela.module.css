@@ -215,3 +215,41 @@
     font-size: 13px;
   }
 }
+
+/* DatePicker wrapper sa clear button */
+.datePickerWrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+/*
+.datePickerWrapper input {
+  width: 100%;
+  padding-right: 32px !important;
+}
+*/
+.clearBtn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  z-index: 10;
+}
+
+.clearBtn:hover {
+  color: #333;
+}
+
+.clearBtn:active {
+  color: #3b82f6;
+}

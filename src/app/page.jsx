@@ -158,7 +158,8 @@ function HomePageContent() {
     'Fitness': 'fa-solid fa-dumbbell',
     'Sportski tereni': 'fa-solid fa-basketball',
     'Sastanci': 'fa-solid fa-envelopes-bulk',
-  };
+    'Grooming': 'fa-solid fa-dog',
+};
 
   const getIconForCategory = (categoryName) => {
     return categoryIconMap[categoryName] || 'fa-solid fa-briefcase';
