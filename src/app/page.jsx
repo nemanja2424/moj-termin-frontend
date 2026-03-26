@@ -165,16 +165,59 @@ function HomePageContent() {
     return categoryIconMap[categoryName] || 'fa-solid fa-briefcase';
   };
 
+  // Filtrira kategorije na osnovu searchTerm-a
+  const getFilteredCategories = () => {
+    if (!searchTerm) {
+      return kategorije;
+    }
+
+    // Filtrira kategorije koje se podudaraju sa pretragom
+    return kategorije.filter(kat => 
+      kat.kategorija.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
   return (
     <div className={styles.container}>
       {/* OVERLAY - Prikazuje se kada je search otvoren na mobilnom */}
       {searchOpen && (
-        <div 
-          className={styles.searchOverlay}
-          onClick={() => {
-            setSearchOpen(false);
-          }}
-        />
+        <>
+          <div 
+            className={styles.searchOverlay}
+            onClick={() => {
+              setSearchOpen(false);
+            }}
+          />
+          
+          {/* FILTERED CATEGORIES ON SEARCH OVERLAY */}
+          <div className={styles.searchOverlayCategories}>
+            <button 
+              className={`${styles.overlayCategory} ${activeCategory === 'all' ? styles.overlayActive : ''}`}
+              onClick={() => {
+                setActiveCategory('all');
+                setSearchTerm('');
+                setSearchOpen(false);
+              }}
+            >
+              <i className="fa-solid fa-grid-2"></i>
+              <span>Sve</span>
+            </button>
+            {getFilteredCategories().map((kat) => (
+              <button 
+                key={kat.id}
+                className={`${styles.overlayCategory} ${activeCategory === String(kat.id) ? styles.overlayActive : ''}`}
+                onClick={() => {
+                  setActiveCategory(String(kat.id));
+                  setSearchTerm('');
+                  setSearchOpen(false);
+                }}
+              >
+                <i className={getIconForCategory(kat.kategorija)}></i>
+                <span>{kat.kategorija}</span>
+              </button>
+            ))}
+          </div>
+        </>
       )}
 
       {/* HEADER */}

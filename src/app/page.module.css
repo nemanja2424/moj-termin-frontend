@@ -110,6 +110,60 @@
   animation: fadeIn 0.2s ease;
 }
 
+.searchOverlayCategories {
+  position: fixed;
+  top: 54px;
+  left: 0;
+  right: 0;
+  background: white;
+  z-index: 99;
+  padding: 12px 10px;
+  display: none;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.overlayCategory {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.overlayCategory:active {
+  background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+  border-color: transparent;
+  color: white;
+}
+
+.overlayActive {
+  background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+  border-color: transparent;
+  color: white;
+}
+
+@media (min-width: 769px) {
+  .searchOverlayCategories {
+    display: none !important;
+  }
+
+  .categoriesBar {
+    display: flex;
+  }
+}
+
 .logoHidden {
   display: none;
 }
@@ -475,6 +529,11 @@
   .categoriesBar {
     margin-bottom: 24px;
     gap: 10px;
+    display: none;
+  }
+
+  .searchOverlayCategories {
+    display: flex;
   }
 
   .categoryBtn {
