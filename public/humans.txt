@@ -1,6 +1,6 @@
 /* TEAM */
   Title: MojTermin Development Team
-  Site: https://test.mojtermin.site
+  Site: https://mojtermin.site
 
 /* THANKS */
   Name: Google

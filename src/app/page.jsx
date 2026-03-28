@@ -83,7 +83,7 @@ function HomePageContent() {
 
   const fetchPreduzecaAndKategorije = async () => {
     try {
-      const response = await fetch('https://test.mojtermin.site/api/preduzeca/get');
+      const response = await fetch('https://mojtermin.site/api/preduzeca/get');
       const data = await response.json();
       
       if (data.success && Array.isArray(data.preduzeca)) {
@@ -128,7 +128,7 @@ function HomePageContent() {
   const getImageUrl = (putnja) => {
     if (!putnja) return null;
     if (putnja.startsWith('http')) return putnja;
-    return `https://test.mojtermin.site/api/logo/${putnja}`;
+    return `https://mojtermin.site/api/logo/${putnja}`;
   };
 
   // Mapping kategorija na ikone
