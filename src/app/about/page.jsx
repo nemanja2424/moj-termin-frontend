@@ -150,14 +150,29 @@ export default function AboutPage() {
         </div>
       </section>
 
-      
       <section className={styles['info-between']}>
-        <h2 className='anim2'><br />Rešite sve svoje potrebe za zakazivanje termina na jednom mestu</h2>
-        <p className='anim'>Platforma takođe omogućava upravljanje više poslovnih lokacija, gde svaka može imati svoje radno vreme, zaposlene i usluge. Sve informacije o terminima, zaposlenima i lokacijama nalaze se na jednom mestu, što olakšava svakodnevno upravljanje poslovanjem.</p>
+        <h2 className='anim2'><br />Neka vas klijenti pronađu – bez dodatnog truda</h2>
+
+        <p className='anim'>
+          Naša platforma ne služi samo za zakazivanje termina – ona pomaže da vas novi klijenti pronađu.
+          Platforma funkcioniše kao mesto na kojem korisnici dolaze kada im je potrebna određena usluga – bilo da je to šišanje, pregled, trening ili nešto drugo.
+        </p>
+
+        <p className='anim3'>
+          Kada napravite nalog, vaše preduzeće dobija svoju stranicu za zakazivanje. Tu klijenti mogu da vide vaše usluge,
+          slobodne termine i odmah zakažu – bez poziva, poruka i čekanja.
+        </p>
+
+        <p className='anim4'>
+          Ljudi koji vas do sada nisu poznavali mogu vas pronaći preko naše platforme i postati vaši novi klijenti.
+          Na taj način, ne dobijate samo alat za organizaciju, već i dodatni način da proširite svoje poslovanje.
+        </p>
+
+        <p className='anim'>
+          Sve je jednostavno – vi postavite termine, a klijenti sami biraju ono što im odgovara.
+          Dok vi radite svoj posao, sistem radi za vas.
+        </p>
       </section>
-
-      
-
 
       <section className={styles['cta-section']}>
         <div className={styles['zatamni-cta']}></div>
@@ -170,7 +185,27 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="ponuda-usluga">
+      <section className={styles['info-between']}>
+        <h2 className='anim2'><br />Napredno upravljanje terminima, lokacijama i zaposlenima</h2>
+
+        <p className='anim'>
+          Platforma omogućava upravljanje više poslovnih lokacija u okviru jednog naloga, pri čemu svaka lokacija može imati definisano radno vreme, dostupne usluge i zaposlene. Sve promene se automatski primenjuju i sinhronizuju u sistemu, bez potrebe za dodatnim podešavanjima.
+        </p>
+
+        <p className='anim3'>
+          Sistem automatski vodi računa o zauzetosti i prikazuje samo slobodne termine klijentima.
+        </p>
+
+        <p className='anim4'>
+          Sve informacije o terminima, zaposlenima i lokacijama dostupne su kroz centralizovanu kontrolnu tablu, što omogućava brz pregled i jednostavno upravljanje svakodnevnim poslovanjem.
+        </p>
+
+        <p className='anim'>
+          Uz dodatne funkcionalnosti kao što su automatska obaveštenja, evidencija zakazivanja i pregled aktivnosti, imate potpunu kontrolu nad organizacijom i efikasnošću svog poslovanja.
+        </p>
+      </section>
+
+      {/*<section className="ponuda-usluga">
         <div className="container anim3">
           <h2>Dodatne usluge</h2>
           <p>
@@ -182,7 +217,7 @@ export default function AboutPage() {
             Za više informacija i individualnu ponudu, javite na <a href='mailto:jakovljevic.nemanja@outlook.com' style={{color:"#0aadff"}}>jakovljevic.nemanja@outlook.com</a>.
           </p>
         </div>
-      </section>
+      </section>*/}
       
       <Footer />
     </div>
