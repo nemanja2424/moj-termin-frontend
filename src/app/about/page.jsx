@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import AboutAnimations from './AboutAnimations';
 
-export const generateMetadata = () => {
+export async function generateMetadata() {
   return {
     title: "O nama – MojTermin",
     description: "Saznajte više o MojTermin-u, modernom sistemu za digitalno zakazivanje termina.",
