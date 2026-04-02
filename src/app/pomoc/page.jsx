@@ -1,4 +1,7 @@
 'use client';
+
+export const revalidate = 60; // ISR - Revalidate svakih 60 sekundi za SEO
+
 {/*
 export default function PomocPage() {
   return (
@@ -6,8 +9,7 @@ export default function PomocPage() {
       
     </div>
   )
-}
-*/}
+}*/}
 
 
 import React, { useRef, useState } from 'react';

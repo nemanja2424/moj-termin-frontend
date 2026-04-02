@@ -1,4 +1,6 @@
 'use client';
+
+export const revalidate = 60; // ISR - Revalidate svakih 60 sekundi za SEO
 export const dynamic = "force-dynamic";
 import { Suspense } from "react";
 import { useSearchParams } from 'next/navigation';

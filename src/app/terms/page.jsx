@@ -1,4 +1,7 @@
 'use client';
+
+export const revalidate = 60; // ISR - Revalidate svakih 60 sekundi za SEO
+
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import styles from '../about/home.module.css'

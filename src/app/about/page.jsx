@@ -1,5 +1,7 @@
 'use client';
 
+export const revalidate = 60; // ISR - Revalidate svakih 60 sekundi za SEO
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'
 import styles from './home.module.css';
@@ -29,8 +31,6 @@ export default function AboutPage() {
           } else if (entry.target.classList.contains('anim4')) {
             entry.target.classList.add('fade-slide-in-up');
           }
-    
-
     
           observer.unobserve(entry.target);
         }
