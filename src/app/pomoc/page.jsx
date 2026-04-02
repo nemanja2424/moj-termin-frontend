@@ -1,15 +1,3 @@
-export const revalidate = 60; // ISR
-
-export const generateMetadata = () => {
-  return {
-    title: "Pomoć – MojTermin",
-    description: "Dobijte odgovore na česta pitanja i nauči kako koristiti sve funkcije MojTermin-a.",
-    alternates: {
-      canonical: "https://mojtermin.site/pomoc",
-    },
-  };
-};
-
 'use client';
 
 import React, { useRef, useState } from 'react';

@@ -1,15 +1,3 @@
-export const revalidate = 60; // ISR
-
-export const generateMetadata = () => {
-  return {
-    title: "Uslovi korišćenja – MojTermin",
-    description: "Pročitajte uslove korišćenja MojTermin platforme.",
-    alternates: {
-      canonical: "https://mojtermin.site/terms",
-    },
-  };
-};
-
 'use client';
 
 import Footer from "@/components/Footer";
