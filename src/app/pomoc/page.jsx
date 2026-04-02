@@ -11,8 +11,6 @@ export async function generateMetadata() {
   };
 }
 
-'use client';
-
 import React, { useRef, useState } from 'react';
 import styles from './pomoc.module.css';
 

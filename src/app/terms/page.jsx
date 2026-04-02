@@ -11,8 +11,6 @@ export async function generateMetadata() {
   };
 }
 
-'use client';
-
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import styles from '../about/home.module.css'
