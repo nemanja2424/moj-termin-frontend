@@ -12,6 +12,7 @@ export async function generateMetadata() {
     alternates: {
       canonical: "https://mojtermin.site/about",
     },
+    keywords: "zakazivanje termina, online zakazivanje, o nama",
   };
 };
 
