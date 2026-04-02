@@ -51,12 +51,6 @@ export const metadata = {
     },
   },
 
-  alternates: {
-    languages: {
-      "sr-RS": "https://mojtermin.site",
-    },
-  },
-
   viewport: {
     width: "device-width",
     initialScale: 1,
