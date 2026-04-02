@@ -52,7 +52,6 @@ export const metadata = {
   },
 
   alternates: {
-    canonical: "https://mojtermin.site",
     languages: {
       "sr-RS": "https://mojtermin.site",
     },
