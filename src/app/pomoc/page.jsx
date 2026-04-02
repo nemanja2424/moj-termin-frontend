@@ -1,16 +1,4 @@
-export const revalidate = 60; // ISR - Revalidate svakih 60 sekundi za SEO
-
 'use client';
-
-{/*
-export default function PomocPage() {
-  return (
-    <div>
-      
-    </div>
-  )
-}*/}
-
 
 import React, { useRef, useState } from 'react';
 import styles from './pomoc.module.css';

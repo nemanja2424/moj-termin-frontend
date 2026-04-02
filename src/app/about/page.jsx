@@ -1,5 +1,3 @@
-export const revalidate = 60; // ISR - Revalidate svakih 60 sekundi za SEO
-
 'use client';
 
 import { useState, useEffect } from 'react';
