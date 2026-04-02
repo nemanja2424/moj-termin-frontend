@@ -51,6 +51,10 @@ export const metadata = {
     },
   },
 
+  alternates: {
+    canonical: "https://mojtermin.site",
+  },
+
   viewport: {
     width: "device-width",
     initialScale: 1,
