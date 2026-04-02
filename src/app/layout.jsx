@@ -55,12 +55,6 @@ export const metadata = {
     canonical: "https://mojtermin.site",
   },
 
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-  },
-
   icons: {
     icon: "/Images/logo.png",
     apple: "/Images/logo.png",
@@ -110,6 +104,13 @@ export const metadata = {
   category: "Business",
 };
 
+export function generateViewport() {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+  };
+}
 
 export default function RootLayout({ children }) {
   const jsonLdOrganization = {
