@@ -1,3 +1,16 @@
+export const revalidate = 60; // ISR
+
+export async function generateMetadata() {
+  return {
+    title: "Pomoć – MojTermin",
+    description: "Dobijte odgovore na česta pitanja i nauči kako koristiti sve funkcije MojTermin-a.",
+    alternates: {
+      canonical: "https://mojtermin.site/pomoc",
+    },
+    keywords: "pomoc, uputstvo, faq, kako koristiti",
+  };
+}
+
 'use client';
 
 import React, { useRef, useState } from 'react';
