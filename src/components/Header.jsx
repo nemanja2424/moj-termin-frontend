@@ -26,7 +26,7 @@ export default function Header() {
       <div className={styles.topRow}>
         <a href={"/"}><Image src="/Images/logo3.png" alt="logo" width={70} height={70} /></a>
         <nav className={styles.nav}>
-            <a onClick={() => {redirekt('/#about')}}>Zašto mi</a>
+            <a onClick={() => {redirekt('/about/#about')}}>Zašto mi</a>
             <a onClick={() => {redirekt('/panel')}}>Preduzetnički panel</a>
             {ulogovan && (<a onClick={() => {localStorage.removeItem('authToken');setUlogovan(false);localStorage.removeItem('userId');}}>Odjavi se</a>)}
           </nav>
@@ -43,7 +43,7 @@ export default function Header() {
       </div>
 
       <div className={`${styles.phoneNav} ${navOpen ? styles.open : ''}`}>
-          <a onClick={() => {redirekt('/#about')}}>Zašto mi</a>
+          <a onClick={() => {redirekt('/about/#about')}}>Zašto mi</a>
           <a onClick={() => {redirekt('/panel')}}>Preduzetnički panel</a>
           {ulogovan && (<a onClick={() => {localStorage.removeItem('authToken');setUlogovan(false);localStorage.removeItem('userId');}}>Odjavi se</a>)}
         <button className={`${styles.button1} ${styles.forPh}`}>Kontaktirajte nas</button>

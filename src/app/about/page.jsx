@@ -38,6 +38,30 @@ export default function AboutPage() {
         <p className='anim3'><br/>Naš sistem nudi jednostavnu stranu za zakazivanje termina za vaše klijente, kontrolnu tablu za vas sa svim potrebnim informacijama, kao i analitiku koja vam pomaže da pratite učinkovitost vašeg poslovanja. Uz mogućnost automatskog slanja obaveštenja i bezbednost podataka, možete biti sigurni da će vaše poslovanje teći glatko i sigurno.</p>
         <p className='anim4'><br/>Bez obzira na vrstu vašeg biznisa, naš sistem je fleksibilan i lako se integriše u vaše postojeće radne procese. Pružite svojim klijentima najbolje iskustvo u zakazivanju termina i uštedite dragoceno vreme!</p>
       </section>
+  
+      <section className={styles['info-between']}>
+        <h2 className='anim2'><br />Neka vas klijenti pronađu – bez dodatnog truda</h2>
+
+        <p className='anim'>
+          Naša platforma ne služi samo za zakazivanje termina – ona pomaže da vas novi klijenti pronađu.
+          Platforma funkcioniše kao mesto na kojem korisnici dolaze kada im je potrebna određena usluga – bilo da je to šišanje, pregled, trening ili nešto drugo.
+        </p>
+
+        <p className='anim3'>
+          Kada napravite nalog, vaše preduzeće dobija svoju stranicu za zakazivanje. Tu klijenti mogu da vide vaše usluge,
+          slobodne termine i odmah zakažu – bez poziva, poruka i čekanja.
+        </p>
+
+        <p className='anim4'>
+          Ljudi koji vas do sada nisu poznavali mogu vas pronaći preko naše platforme i postati vaši novi klijenti.
+          Na taj način, ne dobijate samo alat za organizaciju, već i dodatni način da proširite svoje poslovanje.
+        </p>
+
+        <p className='anim'>
+          Sve je jednostavno – vi postavite termine, a klijenti sami biraju ono što im odgovara.
+          Dok vi radite svoj posao, sistem radi za vas.
+        </p>
+      </section>
 
       <section id='about' className={styles['benefits-section']}>
         <h2>Zašto odabrati naš sistem?</h2>
@@ -94,29 +118,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className={styles['info-between']}>
-        <h2 className='anim2'><br />Neka vas klijenti pronađu – bez dodatnog truda</h2>
-
-        <p className='anim'>
-          Naša platforma ne služi samo za zakazivanje termina – ona pomaže da vas novi klijenti pronađu.
-          Platforma funkcioniše kao mesto na kojem korisnici dolaze kada im je potrebna određena usluga – bilo da je to šišanje, pregled, trening ili nešto drugo.
-        </p>
-
-        <p className='anim3'>
-          Kada napravite nalog, vaše preduzeće dobija svoju stranicu za zakazivanje. Tu klijenti mogu da vide vaše usluge,
-          slobodne termine i odmah zakažu – bez poziva, poruka i čekanja.
-        </p>
-
-        <p className='anim4'>
-          Ljudi koji vas do sada nisu poznavali mogu vas pronaći preko naše platforme i postati vaši novi klijenti.
-          Na taj način, ne dobijate samo alat za organizaciju, već i dodatni način da proširite svoje poslovanje.
-        </p>
-
-        <p className='anim'>
-          Sve je jednostavno – vi postavite termine, a klijenti sami biraju ono što im odgovara.
-          Dok vi radite svoj posao, sistem radi za vas.
-        </p>
-      </section>
 
       <section className={styles['cta-section']}>
         <div className={styles['zatamni-cta']}></div>

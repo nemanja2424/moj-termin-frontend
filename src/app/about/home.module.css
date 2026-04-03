@@ -77,6 +77,9 @@
         font-size: 15px;
         font-weight: 400;
     }
+    .info-between h2{
+        font-size: 25px !important;
+    }
 }
 
 
