@@ -54,11 +54,14 @@ export default function DefaultDesign({
     }
   }, [preduzece.lokacije]);
 
-  // Inicijalizuj kalendar na osnovu formData.dan, mesec, godina
+  // Inicijalizuj rolu iz localStorage
   useEffect(() => {
     const storedRola = localStorage.getItem('rola');
     setRola(storedRola);
   }, []);
+
+  // Provera da li je korisnik zaposleni (rola 1 ili 2)
+  const isEmployee = rola === '1' || rola === '2';
 
   // Inicijalizuj kalendar na osnovu formData.dan, mesec, godina
   useEffect(() => {
@@ -263,14 +266,14 @@ export default function DefaultDesign({
           {forma.ime === true && (
             <div className={styles.inputGroup}>
               <label>Ime</label>
-              <input type="text" name="ime" value={formData.ime} onChange={handleChange} required />
+              <input type="text" name="ime" value={formData.ime} onChange={handleChange} required={!isEmployee} />
             </div>
           )}
 
           {forma.email === true && (
             <div className={styles.inputGroup}>
               <label>Email</label>
-              <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+              <input type="email" name="email" value={formData.email} onChange={handleChange} required={!isEmployee} />
             </div>
           )}
 
@@ -295,7 +298,7 @@ export default function DefaultDesign({
                   name="telefonBezPrefiksa"
                   value={formData.telefon.replace('+381', '')}
                   onChange={handlePhoneChange}
-                  required
+                  required={!isEmployee}
                   style={{
                     flex: 1,
                     borderTopLeftRadius: 0,
@@ -481,7 +484,7 @@ export default function DefaultDesign({
           {forma.opis === true && (
             <div className={styles.inputGroup}>
               <label>Opis</label>
-              <textarea style={{height:'60px',resize:'none'}} name="opis" maxLength={200} value={formData.opis} onChange={handleChange} />
+              <textarea style={{height:'60px',resize:'none'}} name="opis" maxLength={200} value={formData.opis} onChange={handleChange} required={!isEmployee} />
             </div>
           )}
           

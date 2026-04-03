@@ -202,7 +202,11 @@ export default function MultiStepDesign({
   const validateStep = (step) => {
     switch(step) {
       case 1:
-        return formData.ime && formData.email && formData.telefon;
+        const step1Valid = 
+          (forma.ime !== true || formData.ime) &&
+          (forma.email !== true || formData.email) &&
+          (forma.telefon !== true || formData.telefon);
+        return step1Valid;
       case 2:
         return formData.lokacija;
       case 3:
@@ -220,7 +224,7 @@ export default function MultiStepDesign({
         setCurrentStep(currentStep + 1);
       }
     } else {
-      toast.error('Molim popuni sve polje pre nego što nastavi');
+      toast.error('Popunite sva polja pre nego što nastavite');
     }
   };
 

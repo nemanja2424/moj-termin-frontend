@@ -15,6 +15,7 @@ export default function ZakaziPage() {
     const { id } = useParams();
     const [forma, setForma] = useState({});
     const [preduzece, setPreduzece] = useState({});
+    const [rola, setRola] = useState(null);
     const today = new Date();
     const initialFormData = {
         ime: '',
@@ -33,6 +34,12 @@ export default function ZakaziPage() {
     const [loadingSpin, setLoadingSpin] = useState(false);
     const [prebukiran, setPrebukiran] = useState(false);
     const [resetMultiStep, setResetMultiStep] = useState(false);
+
+    // Učitaj rolu iz localStorage
+    useEffect(() => {
+        const storedRola = localStorage.getItem('rola');
+        setRola(storedRola);
+    }, []);
 
     const fetchData = async () => {
         const res = await fetch(`https://mojtermin.site/api/zakazi/${id}/forma`);
@@ -167,7 +174,8 @@ export default function ZakaziPage() {
 
   return (
     <>
-        {forma.izgled === "default" && (
+        {/* Za zaposlene (rola 1 i 2) - prikaži samo DefaultDesign */}
+        {(rola === '1' || rola === '2') ? (
             <DefaultDesign
                 forma={forma}
                 setForma={setForma}
@@ -180,51 +188,69 @@ export default function ZakaziPage() {
                 tipUlaska={1}
                 loadingSpin={loadingSpin}
             />
-        )}
-        {forma.izgled === "minimal" && (
-            <MinimalDesign
-                forma={forma}
-                setForma={setForma}
-                preduzece={preduzece}
-                setPreduzece={setPreduzece}
-                formData={formData}
-                setFormData={setFormData}
-                id={id}
-                handleSubmit={handleSubmit}
-                tipUlaska={1}
-                loadingSpin={loadingSpin}
-            />
-        )}
-        {forma.izgled === "multistep" && (
-            <MultiStepDesign
-                forma={forma}
-                setForma={setForma}
-                preduzece={preduzece}
-                setPreduzece={setPreduzece}
-                formData={formData}
-                setFormData={setFormData}
-                id={id}
-                handleSubmit={handleSubmit}
-                tipUlaska={1}
-                loadingSpin={loadingSpin}
-                shouldResetStep={resetMultiStep}
-                onResetComplete={() => setResetMultiStep(false)}
-            />
-        )}
-        {forma.izgled === "timeline" && (
-            <TimelineDesign
-                forma={forma}
-                setForma={setForma}
-                preduzece={preduzece}
-                setPreduzece={setPreduzece}
-                formData={formData}
-                setFormData={setFormData}
-                id={id}
-                handleSubmit={handleSubmit}
-                tipUlaska={1}
-                loadingSpin={loadingSpin}
-                shouldResetStep={resetMultiStep}
-            />
+        ) : (
+            <>
+                {/* Za klijente - prikaži odabrani dizajn */}
+                {forma.izgled === "default" && (
+                    <DefaultDesign
+                        forma={forma}
+                        setForma={setForma}
+                        preduzece={preduzece}
+                        setPreduzece={setPreduzece}
+                        formData={formData}
+                        setFormData={setFormData}
+                        id={id}
+                        handleSubmit={handleSubmit}
+                        tipUlaska={1}
+                        loadingSpin={loadingSpin}
+                    />
+                )}
+                {forma.izgled === "minimal" && (
+                    <MinimalDesign
+                        forma={forma}
+                        setForma={setForma}
+                        preduzece={preduzece}
+                        setPreduzece={setPreduzece}
+                        formData={formData}
+                        setFormData={setFormData}
+                        id={id}
+                        handleSubmit={handleSubmit}
+                        tipUlaska={1}
+                        loadingSpin={loadingSpin}
+                    />
+                )}
+                {forma.izgled === "multistep" && (
+                    <MultiStepDesign
+                        forma={forma}
+                        setForma={setForma}
+                        preduzece={preduzece}
+                        setPreduzece={setPreduzece}
+                        formData={formData}
+                        setFormData={setFormData}
+                        id={id}
+                        handleSubmit={handleSubmit}
+                        tipUlaska={1}
+                        loadingSpin={loadingSpin}
+                        shouldResetStep={resetMultiStep}
+                        onResetComplete={() => setResetMultiStep(false)}
+                    />
+                )}
+                {forma.izgled === "timeline" && (
+                    <TimelineDesign
+                        forma={forma}
+                        setForma={setForma}
+                        preduzece={preduzece}
+                        setPreduzece={setPreduzece}
+                        formData={formData}
+                        setFormData={setFormData}
+                        id={id}
+                        handleSubmit={handleSubmit}
+                        tipUlaska={1}
+                        loadingSpin={loadingSpin}
+                        shouldResetStep={resetMultiStep}
+                    />
+                )}
+            </>
         )}
         <Footer />
         <ToastContainer />
