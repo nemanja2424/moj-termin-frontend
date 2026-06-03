@@ -1,5 +1,14 @@
 .BrendPage{
     width: 100%;
+    height: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+.BrendPage *,
+.BrendPage *::before,
+.BrendPage *::after {
+    box-sizing: border-box;
 }
 
 .header{
@@ -141,12 +150,43 @@
     flex-direction: column;
     position: relative;
 }
+
+/* Default mobile buttons container - shown on mobile, hidden on desktop */
+.mobileButtonsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  padding: 10px 15px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .linkDiv h3 {
+    font-size: 18px;
+    margin: 0 0 12px 0;
+    text-align: center;
+  }
+}
 .qr {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
 }
+
+  @media (max-width: 768px) {
+    .qr h3 {
+      font-size: 18px;
+      margin: 0;
+      text-align: center;
+    }
+
+    .qr canvas {
+      width: 180px !important;
+      height: 180px !important;
+    }
+  }
 .btn{  
     border-radius: 4px;
     font-size: 13px;
@@ -199,10 +239,13 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 .copyBtn:hover {
   background-color: #2563eb;
+}
+.copyBtn:active {
+  transform: scale(0.96);
 }
 .closeButton {
     position: absolute;
@@ -232,19 +275,86 @@
     gap: 18px;
     clip-path: inset(0 round 12px);
 }
+
+@media (max-width: 768px) {
+  .strukturaModal h3 {
+    font-size: 18px;
+    margin: 0 0 12px 0;
+    text-align: center;
+  }
+}
 .strukturaForm {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 12px;
 }
+
+@media (max-width: 768px) {
+  .strukturaForm {
+    gap: 12px;
+  }
+
+  .strukturaForm h3 {
+    font-size: 18px;
+    margin: 0 0 8px 0;
+    text-align: center;
+    color: #333;
+  }
+
+  .strukturaForm > a {
+    display: block;
+    padding: 12px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    text-align: center;
+    color: #0088E5;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 8px;
+  }
+
+  .strukturaForm > a:active {
+    background-color: #e0e0e0;
+  }
+}
+
 .strukturaLabel {
     font-size: 1rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     cursor: pointer;
     user-select: none;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.strukturaLabel:active {
+    background-color: #f0f0f0;
+}
+
+.strukturaLabel input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .strukturaLabel {
+    font-size: 15px;
+    padding: 10px;
+  }
+
+  .strukturaLabel input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+  }
 }
 .strukturaDugmad {
     display: flex;
@@ -258,38 +368,100 @@
     font-size: 1.5rem;
     color: #888;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color 0.2s, transform 0.2s;
+    padding: 4px;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 .closeButton:hover {
     color: #d00;
+    transform: scale(1.1);
+}
+
+.closeButton:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .closeButton {
+    top: 12px;
+    right: 12px;
+    font-size: 1.8rem;
+  }
 }
 
 
 .linkItem {
   display: flex;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   align-items: center;
 }
+
+@media (max-width: 768px) {
+  .linkItem {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+}
+
 .linkInput {
   flex: 1;
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
   font-size: 14px;
+  min-height: 40px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 .linkInput:focus {
-  border-color: #0070f3;
+  border-color: #0088E5;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 136, 229, 0.1);
+}
+
+@media (max-width: 768px) {
+  .linkInput {
+    font-size: 16px;
+    padding: 12px;
+    min-height: 44px;
+  }
 }
 
 .obrisi {
     cursor: pointer;
-    font-size: 20px;
+    font-size: 18px;
+    padding: 8px;
+    border-radius: 6px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
 }
+
 .obrisi:hover {
-    color: red;
+    color: #ff6b6b;
+    background-color: #fff5f5;
+}
+
+.obrisi:active {
+    transform: scale(0.9);
+}
+
+@media (max-width: 768px) {
+  .obrisi {
+    font-size: 20px;
+    min-width: 44px;
+    min-height: 44px;
+  }
 }
 
 
@@ -377,8 +549,8 @@
 @media (max-width: 768px) {
   .designButtonsContainer {
     flex-wrap: wrap;
-    gap: 6px;
-    padding: 10px;
+    gap: 8px;
+    padding: 12px 15px;
   }
 
   .button2 {
@@ -416,38 +588,51 @@
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .header {
-    padding: 10px 15px;
+    padding: 12px 15px;
     height: auto;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 12px;
   }
 
   .header .linkovi {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     width: 100%;
     order: 1;
   }
 
   .header span {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     width: 100%;
-    padding: 10px 8px;
+    padding: 12px 10px;
     background-color: #f5f5f5;
-    border-radius: 6px;
+    border-radius: 8px;
     text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .header span:active {
+    background-color: #e0e0e0;
   }
 
   .button1 {
     width: 100%;
-    height: 48px;
+    height: 52px;
     font-size: 16px;
     font-weight: 700;
     padding: 0;
     order: 2;
     border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .button1:active {
+    transform: scale(0.98);
   }
 
   .button2 {
@@ -456,9 +641,16 @@
     height: 44px;
     font-size: 13px;
     font-weight: 600;
-    padding: 0 10px;
+    padding: 0 12px;
     margin: 0;
-    min-width: 100px;
+    min-width: 90px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .button2:active {
+    transform: scale(0.96);
   }
 
   .prikazDizajna {
@@ -470,33 +662,30 @@
     flex-direction: column;
     gap: 15px;
     padding: 15px;
-  }
-
-  .mobileButtonsContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 90%;
-    padding: 20px 0;
+    align-items: center;
   }
 
   .mobileButton {
     width: 100%;
-    padding: 16px 20px;
+    padding: 14px 20px;
+    height: 50px;
     background: linear-gradient(60deg, #0AADFF 6.25%, #0a7eb8 40.25%, #0088E5 50%, #123484 80.25%);
     border: none;
     border-radius: 8px;
     color: white;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
-    transition: background-position 0.5s ease;
+    transition: background-position 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
     background-position: left center;
     background-size: 200% 100%;
     letter-spacing: 0.2px;
     font-family: 'Poppins', sans-serif;
     box-shadow: 0 4px 12px rgba(8, 136, 229, 0.3);
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .mobileButton:hover {
@@ -505,12 +694,291 @@
   }
 
   .mobileButton:active {
-    transform: scale(0.98);
+    transform: scale(0.96);
+    box-shadow: 0 2px 8px rgba(8, 136, 229, 0.3);
+  }
+
+  /* Modal responsiveness */
+  .blur {
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .linkDiv {
+    width: 85vw;
+    max-width: 85vw;
+    margin: 0 auto;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    padding: 24px;
+    border-radius: 12px;
+  }
+
+  .strukturaModal {
+    width: 85vw;
+    max-width: 85vw;
+    margin: 0 auto;
+    padding: 24px 20px 20px 20px;
+    min-width: auto;
+    max-height: calc(100vh - 80px);
+    border-radius: 12px;
+  }
+
+  .strukturaDugmad {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .strukturaDugmad .button1,
+  .strukturaDugmad .button2 {
+    width: 100%;
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .copyWrapper {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 15px;
+  }
+
+  .copyBtn {
+    width: 100%;
+    height: 44px;
+    font-size: 14px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .linkInput {
+    font-size: 16px;
+    padding: 12px;
+    height: 44px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+  }
+
+  .linkInput:focus {
+    border-color: #0088E5;
+    box-shadow: 0 0 0 3px rgba(0, 136, 229, 0.1);
+  }
+
+  .linkText {
+    font-size: 15px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobilePreviewModal {
+    padding: 15px;
+  }
+
+  .closePreview {
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+  }
+
+  .phonePreviewWrapper {
+    max-width: 100%;
+    max-height: calc(100vh - 60px);
+  }
+
+  /* Sakrij PC preview na mobilnom */
+  .pcPreviewModal {
+    display: none !important;
   }
 }
 
 @media (min-width: 769px) {
   .mobileButtonsContainer {
     display: none;
+  }
+}
+
+/* Mobile Preview Modal */
+.mobilePreviewModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  z-index: 1001;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: auto;
+}
+
+.phonePreviewWrapper {
+  width: 100%;
+  max-width: 450px;
+  height: 100%;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closePreview {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 1002;
+  transition: transform 0.2s ease;
+}
+
+.closePreview:hover {
+  transform: scale(1.2);
+  color: #ff6b6b;
+}
+
+@media (max-width: 768px) {
+  .BrendPage {
+    min-height: 100%;
+    overflow-x: hidden;
+    padding-bottom: max(18px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .header {
+    width: 100%;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .header .linkovi {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .header span {
+    min-height: 44px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.25;
+  }
+
+  .header .button1 {
+    min-height: 46px;
+  }
+
+  .designButtonsContainer {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .designButtonsContainer .button2 {
+    width: 100% !important;
+    min-width: 0;
+    height: 42px !important;
+    border-radius: 8px;
+    font-size: clamp(11px, 3.2vw, 13px) !important;
+    white-space: nowrap;
+  }
+
+  .content {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 0 10px 18px;
+    gap: 10px;
+    overflow: visible;
+  }
+
+  .mobileButtonsContainer {
+    width: 100%;
+    padding: 0;
+  }
+
+  .mobileButton {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .blur {
+    width: 100%;
+    z-index: 1200;
+    padding: 16px;
+  }
+
+  .linkDiv,
+  .strukturaModal {
+    width: 100%;
+    max-width: 430px;
+    min-width: 0;
+    max-height: calc(100dvh - 32px);
+  }
+
+  .copyWrapper {
+    align-items: stretch;
+  }
+
+  .linkText {
+    width: 100%;
+  }
+
+  .linkItem {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    gap: 8px;
+  }
+
+  .linkItem .linkInput {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .linkItem .obrisi {
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .mobilePreviewModal {
+    width: 100%;
+    height: 100dvh;
+    padding: 14px;
+  }
+
+  .phonePreviewWrapper {
+    width: min(100%, 430px);
+    height: calc(100dvh - 28px);
+    max-height: none;
+  }
+
+  .closePreview {
+    top: max(12px, env(safe-area-inset-top, 0px));
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .designButtonsContainer {
+    grid-template-columns: 1fr;
   }
 }

@@ -215,15 +215,42 @@ export default function BrendPage() {
                             </div>
                         </div>
 
-                        {/* Mobilna verzija - samo dugmeta */}
+                        {/* Mobilna verzija - samo jedno dugme za preview */}
                         <div className={styles.mobileButtonsContainer}>
-                            <button className={styles.mobileButton} onClick={() => uvelicaj('pc')}>
-                                Uveličaj PC verziju
-                            </button>
                             <button className={styles.mobileButton} onClick={() => uvelicaj('ph')}>
-                                Uveličaj Mobilnu verziju
+                                Uveličaj
                             </button>
                         </div>
+
+                        {/* Mobilni full-screen preview PC */}
+                        {pcZoomed && (
+                            <div className={`${styles.mobilePreviewModal} ${styles.pcPreviewModal}`}>
+                                <iframe
+                                    key={`${selectedDesign}-${iframeKey}-pc`}
+                                    src={`/preview?design=${selectedDesign}`}
+                                    style={{ width: '100%', height: '100%', border: 'none' }}
+                                />
+                                <div className={styles.closePreview} onClick={() => uvelicaj('pc')}>
+                                    <i className="fa-regular fa-circle-xmark"></i>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Mobilni full-screen preview Phone */}
+                        {phZoomed && (
+                            <div className={styles.mobilePreviewModal}>
+                                <div className={styles.phonePreviewWrapper}>
+                                    <iframe
+                                        key={`${selectedDesign}-${iframeKey}-ph`}
+                                        src={`/preview?design=${selectedDesign}`}
+                                        style={{ width: '100%', height: '100%', border: 'none', borderRadius: '8px' }}
+                                    />
+                                </div>
+                                <div className={styles.closePreview} onClick={() => uvelicaj('ph')}>
+                                    <i className="fa-regular fa-circle-xmark"></i>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </>
             ) : (
@@ -338,7 +365,7 @@ export default function BrendPage() {
                             <button className={styles.button1} onClick={handleSacuvajStrukturu} type="button">
                                 Premeni
                             </button>
-                            <button className={styles.button2} onClick={handleOtkazi} type="button">
+                            <button className={styles.button2} onClick={handleOtkazi} type="button" style={{ minHeight: "30px" }}>
                                 Otkaži
                             </button>
                         </div>
