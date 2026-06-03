@@ -135,13 +135,13 @@
     }
 }
 
-/*BREND PRIKAZ*/
+/*BREND PRIKAZ
 @media (max-width: 1250px) {
     .brend{
         display: none;
     }
 }
-
+*/
 /*RESENJE ZA TOGGLE DUGME ZA TEL*/
 
 @media (max-width: 600px) {

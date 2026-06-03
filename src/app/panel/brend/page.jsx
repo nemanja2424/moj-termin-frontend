@@ -38,7 +38,7 @@ export default function BrendPage() {
             const userId = localStorage.getItem("userId");
             if (userId === null) return;
 
-            const res = await fetch(`https://test.mojtermin.site/api/zakazi/${userId}/forma`);
+            const res = await fetch(`https://mojtermin.site/api/zakazi/${userId}/forma`);
             const data = await res.json();
 
             localStorage.setItem('zakaziForma', JSON.stringify(data.forma));
@@ -129,7 +129,7 @@ export default function BrendPage() {
             izgled: selectedDesign
         };
 
-        const res = await fetch(`https://test.mojtermin.site/api/brend/${userId}`, {
+        const res = await fetch(`https://mojtermin.site/api/brend/${userId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -183,7 +183,7 @@ export default function BrendPage() {
 
             {dizajnObavestenja ? (
                 <>
-                    <div style={{ display: 'flex', gap: '10px', padding: '10px' }}>
+                    <div className={styles.designButtonsContainer}>
                         <button onClick={() => {setSelectedDesign('default'); console.log(selectedDesign)}} className={styles.button2}>Default</button>
                         {/*<button onClick={() => {setSelectedDesign('minimal'); console.log(selectedDesign)}} className={styles.button2}>Minimal</button>*/}
                         <button onClick={() => {setSelectedDesign('multistep'); console.log(selectedDesign)}} className={styles.button2}>MultiStep</button>
@@ -213,6 +213,16 @@ export default function BrendPage() {
                                     <i className="fa-regular fa-circle-xmark"></i>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Mobilna verzija - samo dugmeta */}
+                        <div className={styles.mobileButtonsContainer}>
+                            <button className={styles.mobileButton} onClick={() => uvelicaj('pc')}>
+                                Uveličaj PC verziju
+                            </button>
+                            <button className={styles.mobileButton} onClick={() => uvelicaj('ph')}>
+                                Uveličaj Mobilnu verziju
+                            </button>
                         </div>
                     </div>
                 </>

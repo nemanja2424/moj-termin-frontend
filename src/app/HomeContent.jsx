@@ -49,7 +49,7 @@ export default function HomeContent() {
         if (authToken && isTokenValid(authToken)) {
           // Korisnik je prijavljen - preuzmi njegov grad
           try {
-            const response = await fetch('https://test.mojtermin.site/api/podesavanja/korisnik-grad', {
+            const response = await fetch('https://mojtermin.site/api/podesavanja/korisnik-grad', {
               headers: {
                 'Authorization': `Bearer ${authToken}`
               }
@@ -127,7 +127,7 @@ export default function HomeContent() {
 
   const loadGradovi = async () => {
     try {
-      const response = await fetch('https://test.mojtermin.site/api/podesavanja/gradovi');
+      const response = await fetch('https://mojtermin.site/api/podesavanja/gradovi');
       const data = await response.json();
       
       if (data.success && Array.isArray(data.gradovi)) {
@@ -153,8 +153,8 @@ export default function HomeContent() {
   const fetchPreduzecaAndKategorije = async (gradId) => {
     try {
       const url = gradId ? 
-        `https://test.mojtermin.site/api/preduzeca/get?grad_id=${gradId}` : 
-        'https://test.mojtermin.site/api/preduzeca/get';
+        `https://mojtermin.site/api/preduzeca/get?grad_id=${gradId}` : 
+        'https://mojtermin.site/api/preduzeca/get';
       
       const response = await fetch(url);
       const data = await response.json();
@@ -201,7 +201,7 @@ export default function HomeContent() {
   const getImageUrl = (putnja) => {
     if (!putnja) return null;
     if (putnja.startsWith('http')) return putnja;
-    return `https://test.mojtermin.site/api/logo/${putnja}`;
+    return `https://mojtermin.site/api/logo/${putnja}`;
   };
 
   // Mapping kategorija na ikone

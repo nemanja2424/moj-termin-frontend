@@ -25,6 +25,8 @@
 .header span{
     color: #000;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
 }
 .header span:hover{
     color: #0088E5;
@@ -366,6 +368,29 @@
     }
   }
 
+.designButtonsContainer {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+}
+
+@media (max-width: 768px) {
+  .designButtonsContainer {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .button2 {
+    flex: 1;
+    min-width: 80px;
+    height: 42px !important;
+    font-size: 11px !important;
+    width: auto !important;
+    padding: 0 8px !important;
+  }
+}
+
 .loadingScreen {
   min-width: calc(100% - 22px);
   min-height: 100%;
@@ -386,4 +411,106 @@
 .loadingScreen.ucitano {
   opacity: 0;
   z-index: -5;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .header {
+    padding: 10px 15px;
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .header .linkovi {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    order: 1;
+  }
+
+  .header span {
+    font-size: 15px;
+    font-weight: 600;
+    width: 100%;
+    padding: 10px 8px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .button1 {
+    width: 100%;
+    height: 48px;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 0;
+    order: 2;
+    border-radius: 8px;
+  }
+
+  .button2 {
+    width: auto;
+    flex: 1;
+    height: 44px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 10px;
+    margin: 0;
+    min-width: 100px;
+  }
+
+  .prikazDizajna {
+    display: none;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .mobileButtonsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 90%;
+    padding: 20px 0;
+  }
+
+  .mobileButton {
+    width: 100%;
+    padding: 16px 20px;
+    background: linear-gradient(60deg, #0AADFF 6.25%, #0a7eb8 40.25%, #0088E5 50%, #123484 80.25%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-position 0.5s ease;
+    background-position: left center;
+    background-size: 200% 100%;
+    letter-spacing: 0.2px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 12px rgba(8, 136, 229, 0.3);
+    box-sizing: border-box;
+  }
+
+  .mobileButton:hover {
+    background-position: right center;
+    box-shadow: 0 6px 16px rgba(8, 136, 229, 0.5);
+  }
+
+  .mobileButton:active {
+    transform: scale(0.98);
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileButtonsContainer {
+    display: none;
+  }
 }
