@@ -38,7 +38,7 @@ export default function BrendPage() {
             const userId = localStorage.getItem("userId");
             if (userId === null) return;
 
-            const res = await fetch(`http://127.0.0.1:5000/api/zakazi/${userId}/forma`);
+            const res = await fetch(`https://test.mojtermin.site/api/zakazi/${userId}/forma`);
             const data = await res.json();
 
             localStorage.setItem('zakaziForma', JSON.stringify(data.forma));
@@ -129,7 +129,7 @@ export default function BrendPage() {
             izgled: selectedDesign
         };
 
-        const res = await fetch(`http://127.0.0.1:5000/api/brend/${userId}`, {
+        const res = await fetch(`https://test.mojtermin.site/api/brend/${userId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
