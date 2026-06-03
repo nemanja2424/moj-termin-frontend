@@ -9,6 +9,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { fetchGradovi } from '@/lib/gradService';
 
 const LoginContent = () => {
   const searchParams = useSearchParams();
@@ -19,7 +20,13 @@ const LoginContent = () => {
     if (authToken) {
       window.location.href = "/";
     }
+    loadGradovi();
   }, []);
+
+  const loadGradovi = async () => {
+    const data = await fetchGradovi();
+    setGradovi(data);
+  };
   const [loading, setLoading] = useState(false);
   const toggleLogin = () => setLogin(false);
   const toggleReg = () => setLogin(true);
@@ -45,7 +52,7 @@ const LoginContent = () => {
     
     setLoading(true);
     try {
-      const res = await fetch('https://mojtermin.site/api/auth/login', {
+      const res = await fetch('http://127.0.0.1:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -90,6 +97,8 @@ const LoginContent = () => {
   const [regPassConf, setRegPassConf] = useState('');
   const [showRegPassConf, setShowRegPassConf] =useState(false);
   const [brTel, setBrTel] = useState('+381');
+  const [gradId, setGradId] = useState('');
+  const [gradovi, setGradovi] = useState([]);
 
   const handleRegSubmit = async (e) => {
     e.preventDefault();
@@ -114,6 +123,11 @@ const LoginContent = () => {
     }
     if (brTel.length < 5 || !/^\+?\d+$/.test(brTel) || (brTel.startsWith('+') && (brTel.match(/\+/g) || []).length > 1)) {
       toast.error('Unesite validan broj telefona (dozvoljen samo jedan + na početku, ostatak brojevi).');
+      return;
+    }
+
+    if (!gradId) {
+      toast.error('Molimo odaberite grad.');
       return;
     }
 
@@ -185,12 +199,12 @@ const LoginContent = () => {
     const rola = 3; // Zakazivac rola
 
     try {
-      const res = await fetch('https://mojtermin.site/api/auth/signup', {
+      const res = await fetch('http://127.0.0.1:5000/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ regEmail, regPass, ime, brTel, forma, radnoVreme, cenovnik, ai_info, paket_limits, rola })
+        body: JSON.stringify({ regEmail, regPass, ime, brTel, grad_id: parseInt(gradId), forma, radnoVreme, cenovnik, ai_info, paket_limits, rola })
       });
   
       const data = await res.json();
@@ -301,6 +315,16 @@ const LoginContent = () => {
                   <input value={brTel} onChange={(e) => setBrTel(e.target.value)}
                   type='text' className={styles.formStyle} placeholder='Broj telefona'/>
                   <i className={`${styles.inputIcon} uil uil-phone`}></i>
+                </div>
+                <div className={styles.formGroup}>
+                  <select value={gradId} onChange={(e) => setGradId(e.target.value)}
+                  className={styles.formStyle} style={{ cursor: 'pointer' }}>
+                    <option value="">-- Odaberite grad --</option>
+                    {gradovi.map((grad) => (
+                      <option key={grad.id} value={grad.id}>{grad.grad}</option>
+                    ))}
+                  </select>
+                  <i className={`${styles.inputIcon} uil uil-map-pin`}></i>
                 </div>
                 <div style={{ color: '#fff' }}>
                   <input 

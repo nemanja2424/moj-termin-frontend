@@ -583,7 +583,7 @@ export default function StatistikaPage() {
         if (!authToken || !userId) return;
 
         const response = await fetch(
-          `https://mojtermin.site/api/chats?userId=${userId}&authToken=${authToken}`,
+          `http://127.0.0.1:5000/api/chats?userId=${userId}&authToken=${authToken}`,
           {
             headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -621,7 +621,7 @@ export default function StatistikaPage() {
 
       setChatLoading(true);
       const response = await fetch(
-        `https://mojtermin.site/api/chat/${chatId}?userId=${userId}&authToken=${authToken}`,
+        `http://127.0.0.1:5000/api/chat/${chatId}?userId=${userId}&authToken=${authToken}`,
         {
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -659,7 +659,7 @@ export default function StatistikaPage() {
         return;
       }
 
-      const response = await fetch("https://mojtermin.site/api/chat/create", {
+      const response = await fetch("http://127.0.0.1:5000/api/chat/create", {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -742,7 +742,7 @@ export default function StatistikaPage() {
       if (!authToken || !userId) return;
 
       const response = await fetch(
-        `https://mojtermin.site/api/chat/${chatToDelete.chat_id}`,
+        `http://127.0.0.1:5000/api/chat/${chatToDelete.chat_id}`,
         {
           method: "DELETE",
           headers: {
@@ -786,7 +786,7 @@ export default function StatistikaPage() {
       if (!authToken || !userId) return;
 
       const response = await fetch(
-        `https://mojtermin.site/api/chat/${chatToRename.chat_id}/rename`,
+        `http://127.0.0.1:5000/api/chat/${chatToRename.chat_id}/rename`,
         {
           method: "PATCH",
           headers: {
@@ -923,7 +923,7 @@ export default function StatistikaPage() {
         
         // Sačuvaj ažuriranu poruku u bazi
         try {
-          await fetch(`https://mojtermin.site/api/chat/${currentChatId}/message`, {
+          await fetch(`http://127.0.0.1:5000/api/chat/${currentChatId}/message`, {
             method: "POST",
             headers: {
               'Authorization': `Bearer ${authToken}`,
@@ -957,7 +957,7 @@ export default function StatistikaPage() {
         
         // Sačuvaj ažuriranu poruku u bazi
         try {
-          await fetch(`https://mojtermin.site/api/chat/${currentChatId}/message`, {
+          await fetch(`http://127.0.0.1:5000/api/chat/${currentChatId}/message`, {
             method: "POST",
             headers: {
               'Authorization': `Bearer ${authToken}`,
@@ -1025,7 +1025,7 @@ export default function StatistikaPage() {
       
       // Sačuvaj ažuriranu poruku u bazi
       try {
-        await fetch(`https://mojtermin.site/api/chat/${currentChatId}/message`, {
+        await fetch(`http://127.0.0.1:5000/api/chat/${currentChatId}/message`, {
           method: "POST",
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -1075,7 +1075,7 @@ export default function StatistikaPage() {
     let chatId = currentChatId;
     if (!chatId) {
       try {
-        const createResponse = await fetch("https://mojtermin.site/api/chat/create", {
+        const createResponse = await fetch("http://127.0.0.1:5000/api/chat/create", {
           method: "POST",
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -1131,7 +1131,7 @@ export default function StatistikaPage() {
 
     // Čuva user poruku u bazi
     try {
-      await fetch(`https://mojtermin.site/api/chat/${chatId}/message`, {
+      await fetch(`http://127.0.0.1:5000/api/chat/${chatId}/message`, {
         method: "POST",
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -1165,7 +1165,7 @@ export default function StatistikaPage() {
       const fetchAIResponse = async () => {
         try {
           let tip = 1;
-          const response = await fetch("https://mojtermin.site/api/askAI", {
+          const response = await fetch("http://127.0.0.1:5000/api/askAI", {
             method: "POST",
             headers: {
               'Authorization': `Bearer ${authToken}`,
@@ -1215,7 +1215,7 @@ export default function StatistikaPage() {
 
       // Čuva bot poruku u bazi
       try {
-        await fetch(`https://mojtermin.site/api/chat/${chatId}/message`, {
+        await fetch(`http://127.0.0.1:5000/api/chat/${chatId}/message`, {
           method: "POST",
           headers: {
             'Authorization': `Bearer ${authToken}`,

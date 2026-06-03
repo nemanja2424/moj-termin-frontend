@@ -7,6 +7,7 @@ import stylesLogin from '@/app/login/login.module.css';
 import useLogout from '@/hooks/useLogout';
 import MarkdownEditor from '@/components/MarkdownEditor';
 import { QRCodeSVG } from 'qrcode.react';
+import { fetchGradovi } from '@/lib/gradService';
 
 export default function PodesavanjaPage() {
     const logout = useLogout();
@@ -30,6 +31,8 @@ export default function PodesavanjaPage() {
     const [showDodajLokaciju, setShowDodajLokaciju] = useState(false);
     const [imeLokacije, setImeLokacije] = useState('');
     const [adresa, setAdresa] = useState('');
+    const [gradIdLokacija, setGradIdLokacija] = useState('');
+    const [gradovi, setGradovi] = useState([]);
     const [editFirmaId, setEditFirmaId] = useState(null);
     const [editedFirmData, setEditedFirmData] = useState({});
     const fileInputRef = useRef();
@@ -156,7 +159,7 @@ export default function PodesavanjaPage() {
         setLoadingPotvrdi(true);
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch(`https://mojtermin.site/api/podesavanja/user/${userId}`, {
+        const res = await fetch(`http://127.0.0.1:5000/api/podesavanja/user/${userId}`, {
             method: 'PATCH',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
@@ -196,7 +199,7 @@ export default function PodesavanjaPage() {
         }
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch(`https://mojtermin.site/api/podesavanja/nova-lozinka/${userId}`, {
+        const res = await fetch(`http://127.0.0.1:5000/api/podesavanja/nova-lozinka/${userId}`, {
             method: 'PATCH',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
@@ -220,18 +223,32 @@ export default function PodesavanjaPage() {
     }
     const handleDodajLokaciju = async (e) => {
         e.preventDefault();
+        
+        if (!imeLokacije.trim()) {
+            toast.error('Molimo unesite ime lokacije.');
+            return;
+        }
+        if (!adresa.trim()) {
+            toast.error('Molimo unesite adresu.');
+            return;
+        }
+        if (!gradIdLokacija) {
+            toast.error('Molimo odaberite grad.');
+            return;
+        }
+        
         setLoadingLokacija(true);
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
         const cenovnik = korisnik.cenovnik || []; 
         const radno_vreme = korisnik.radnoVreme || {};
-        const res = await fetch(`https://mojtermin.site/api/podesavanja/dodaj-lokaciju/${userId}`, {
+        const res = await fetch(`http://127.0.0.1:5000/api/podesavanja/dodaj-lokaciju/${userId}`, {
             method:'POST',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({imeLokacije, adresa, cenovnik, radno_vreme })
+            body: JSON.stringify({imeLokacije, adresa, grad_id: parseInt(gradIdLokacija), cenovnik, radno_vreme })
         });
         const data = await res.json();
 
@@ -245,17 +262,32 @@ export default function PodesavanjaPage() {
         setShowDodajLokaciju(false);
         setImeLokacije('');
         setAdresa('');
+        setGradIdLokacija('');
     }
     const handleConfirmEdit = async (firmaId) => {
+        const gradId = editedFirmData.grad_id;
+        if (!gradId) {
+            toast.error('Molimo odaberite grad.');
+            return;
+        }
+        
         setLoadingPotvrdi(true);
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch(`https://mojtermin.site/api/podesavanja/izmeni-lokaciju/${firmaId}`, {
+        
+        const payload = {
+            ime: editedFirmData.ime || '',
+            adresa: editedFirmData.adresa || '',
+            grad_id: typeof gradId === 'string' ? parseInt(gradId) : gradId,
+            overlapLimit: editedFirmData.overlapLimit || 1
+        };
+        
+        const res = await fetch(`http://127.0.0.1:5000/api/podesavanja/izmeni-lokaciju/${firmaId}`, {
         method:'PATCH',
         headers:{
             'Authorization': `Bearer ${authToken}`,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(editedFirmData)
+        body: JSON.stringify(payload)
     });
 
     const data = await res.json();
@@ -288,7 +320,7 @@ export default function PodesavanjaPage() {
         formData.append('file', file);
     
         try {
-            const response = await fetch('https://mojtermin.site/api/novi_logo', {
+            const response = await fetch('http://127.0.0.1:5000/api/novi_logo', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${authToken}`,
@@ -360,7 +392,7 @@ export default function PodesavanjaPage() {
 
     const fetchData = async () => {
         const authToken = localStorage.getItem('authToken');
-        const res = await fetch('https://mojtermin.site/api/auth/me', {
+        const res = await fetch('http://127.0.0.1:5000/api/auth/me', {
             method: 'GET',
             headers:{
                 'Authorization': `Bearer ${authToken}`,
@@ -402,7 +434,13 @@ export default function PodesavanjaPage() {
             setBookingLink(`https://mojtermin.site/zakazi/${userId}`);
         }
         fetchData();
+        loadGradovi();
     }, []);
+
+    const loadGradovi = async () => {
+        const data = await fetchGradovi();
+        setGradovi(data);
+    };
 
     const prikaziRadnoVreme = (tip) => {
         if (tip === 'default') {
@@ -483,7 +521,7 @@ export default function PodesavanjaPage() {
         const authToken = localStorage.getItem('authToken');
 
         try{
-            const response = await fetch(`https://mojtermin.site/api/podesavanja/radno-vreme`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/podesavanja/radno-vreme`, {
                 method: 'PATCH',
                 headers:{
                     'Authorization': `Bearer ${authToken}`,
@@ -592,7 +630,7 @@ export default function PodesavanjaPage() {
         const userId = localStorage.getItem('userId');
         const authToken = localStorage.getItem('authToken');
         try{
-            const response = await fetch(`https://mojtermin.site/api/podesavanja/cenovnik`, {
+            const response = await fetch(`http://127.0.0.1:5000/api/podesavanja/cenovnik`, {
                 method: 'PATCH',
                 headers:{
                     'Authorization': `Bearer ${authToken}`,
@@ -820,7 +858,7 @@ export default function PodesavanjaPage() {
                     <button onClick={handleButtonClickLogo} className={styles.btn} style={{width:'120px', textAlign:'center'}}>Izmeni logo</button>
                     <input type="file" accept="image/*" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} />
                 </div>
-                <img loading='lazy' src={korisnik.putanja_za_logo === '/Images/logo3.png' ? '/Images/logo3.png' : `https://mojtermin.site/api/logo/${korisnik.putanja_za_logo}`} />
+                <img loading='lazy' src={korisnik.putanja_za_logo === '/Images/logo3.png' ? '/Images/logo3.png' : `http://127.0.0.1:5000/api/logo/${korisnik.putanja_za_logo}`} />
             </div>
             <div className={`${styles.stavka} ${styles.firme}`} style={{flexDirection:'column', alignItems:'center'}}>
                 <h2>Moje lokacije</h2>
@@ -880,6 +918,16 @@ export default function PodesavanjaPage() {
                                             value={editedFirmData.adresa || ''} 
                                             onChange={(e) => setEditedFirmData({...editedFirmData, adresa: e.target.value})}
                                         />
+                                        <select 
+                                            value={editedFirmData.grad_id ? String(editedFirmData.grad_id) : ''} 
+                                            onChange={(e) => setEditedFirmData({...editedFirmData, grad_id: e.target.value ? parseInt(e.target.value) : null})}
+                                            style={{ cursor: 'pointer', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+                                        >
+                                            <option value="">-- Odaberite grad --</option>
+                                            {gradovi.map((grad) => (
+                                                <option key={grad.id} value={grad.id}>{grad.grad}</option>
+                                            ))}
+                                        </select>
                                         <input 
                                             min={1}
                                             value={editedFirmData.overlapLimit || ''} 
@@ -891,6 +939,7 @@ export default function PodesavanjaPage() {
                                     <>
                                         <h4>{firma.ime}</h4>
                                         <span>{firma.adresa}</span>
+                                        <span style={{fontWeight:'300'}}>Grad: <span style={{fontWeight:'600'}}>{gradovi.find(g => g.id === firma.grad_id)?.grad || 'N/A'}</span></span>
                                         <span style={{fontWeight:'300'}}>Ograničenja istovremenih termina: <span style={{fontWeight:'600'}}>{firma.overlapLimit}</span></span>
                                     </>
                                 )}
@@ -904,8 +953,15 @@ export default function PodesavanjaPage() {
                                         if (isEditing) {
                                             handleConfirmEdit(firma.id);
                                         } else {
+                                            // Inicijalizuj edit mode sa svim podacima
+                                            const initialGradId = firma.grad_id ? parseInt(firma.grad_id) : '';
                                             setEditFirmaId(firma.id);
-                                            setEditedFirmData({ ime: firma.ime, adresa: firma.adresa, overlapLimit: firma.overlapLimit });
+                                            setEditedFirmData({ 
+                                                ime: firma.ime, 
+                                                adresa: firma.adresa, 
+                                                grad_id: initialGradId,
+                                                overlapLimit: firma.overlapLimit 
+                                            });
                                         }
                                     }}
                                     disabled={isEditing && loadingPotvrdi}
@@ -1026,6 +1082,16 @@ export default function PodesavanjaPage() {
                             <input type='text' value={adresa} onChange={(e) => { setAdresa(e.target.value) }}
                                 className={stylesLogin.formStyle} placeholder='Adresa' required />
                             <i className={`${stylesLogin.inputIcon} fa-solid fa-location-dot`} style={{ transform: 'translateY(-25%)' }}></i>
+                        </div>
+                        <div className={stylesLogin.formGroup}>
+                            <select value={gradIdLokacija} onChange={(e) => setGradIdLokacija(e.target.value)}
+                                className={stylesLogin.formStyle} required style={{ cursor: 'pointer' }}>
+                                <option value="">-- Odaberite grad --</option>
+                                {gradovi.map((grad) => (
+                                    <option key={grad.id} value={grad.id}>{grad.grad}</option>
+                                ))}
+                            </select>
+                            <i className={`${stylesLogin.inputIcon} uil uil-map-pin`}></i>
                         </div>
                         <div style={{fontSize:'13px', color:'#666', backgroundColor:'#f5f5f5', padding:'10px', borderRadius:'4px', marginBottom:'15px'}}>
                             <strong>Napomena:</strong> Nova lokacija će preuzeti vaš podrazumevani cenovnik i radno vreme. Možete ih kasnije izmeniti kroz dugme "Cenovnik" i "Radno vreme" za ovu lokaciju.

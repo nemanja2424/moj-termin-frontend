@@ -20,10 +20,12 @@ export default function HomeContent() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [gradovi, setGradovi] = useState([]);
+  const [selectedGradId, setSelectedGradId] = useState(null);
 
   useEffect(() => {
-    fetchPreduzecaAndKategorije();
     checkAuthentication();
+    loadGradovi();
     
     // Učitaj poruku iz URL parametara
     if (typeof window !== 'undefined') {
@@ -36,6 +38,48 @@ export default function HomeContent() {
       }
     }
   }, []);
+
+  // Kada se gradovi učitaju, odredi odabrani grad
+  useEffect(() => {
+    if (gradovi.length > 0) {
+      const selectGrad = async () => {
+        const authToken = localStorage.getItem('authToken');
+        const defaultGradId = gradovi[0].id;
+
+        if (authToken && isTokenValid(authToken)) {
+          // Korisnik je prijavljen - preuzmi njegov grad
+          try {
+            const response = await fetch('http://127.0.0.1:5000/api/podesavanja/korisnik-grad', {
+              headers: {
+                'Authorization': `Bearer ${authToken}`
+              }
+            });
+            const data = await response.json();
+            
+            if (data.success && data.grad_id) {
+              setSelectedGradId(data.grad_id);
+            } else {
+              setSelectedGradId(defaultGradId);
+            }
+          } catch (error) {
+            console.error('Error fetching korisnik grad:', error);
+            setSelectedGradId(defaultGradId);
+          }
+        } else {
+          // Korisnik nije prijavljen - koristi prvi grad
+          setSelectedGradId(defaultGradId);
+        }
+      };
+
+      selectGrad();
+    }
+  }, [gradovi]);
+
+  useEffect(() => {
+    if (selectedGradId !== null) {
+      fetchPreduzecaAndKategorije(selectedGradId);
+    }
+  }, [selectedGradId]);
 
   useEffect(() => {
     if (searchOpen && inputRef.current) {
@@ -81,9 +125,38 @@ export default function HomeContent() {
     }
   };
 
-  const fetchPreduzecaAndKategorije = async () => {
+  const loadGradovi = async () => {
     try {
-      const response = await fetch('https://mojtermin.site/api/preduzeca/get');
+      const response = await fetch('http://127.0.0.1:5000/api/podesavanja/gradovi');
+      const data = await response.json();
+      
+      if (data.success && Array.isArray(data.gradovi)) {
+        // Sortiraj gradove - Beograd, Niš, Novi Sad na početku
+        const priorityOrder = ['Beograd', 'Niš', 'Novi Sad'];
+        const sorted = data.gradovi.sort((a, b) => {
+          const indexA = priorityOrder.indexOf(a.grad);
+          const indexB = priorityOrder.indexOf(b.grad);
+          
+          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+          return a.grad.localeCompare(b.grad);
+        });
+        
+        setGradovi(sorted);
+      }
+    } catch (error) {
+      console.error('Error fetching gradovi:', error);
+    }
+  };
+
+  const fetchPreduzecaAndKategorije = async (gradId) => {
+    try {
+      const url = gradId ? 
+        `http://127.0.0.1:5000/api/preduzeca/get?grad_id=${gradId}` : 
+        'http://127.0.0.1:5000/api/preduzeca/get';
+      
+      const response = await fetch(url);
       const data = await response.json();
       
       if (data.success && Array.isArray(data.preduzeca)) {
@@ -128,7 +201,7 @@ export default function HomeContent() {
   const getImageUrl = (putnja) => {
     if (!putnja) return null;
     if (putnja.startsWith('http')) return putnja;
-    return `https://mojtermin.site/api/logo/${putnja}`;
+    return `http://127.0.0.1:5000/api/logo/${putnja}`;
   };
 
   // Mapping kategorija na ikone
@@ -295,6 +368,31 @@ export default function HomeContent() {
             <h1 className={styles.title}>Pronađi termin</h1>
             <p className={styles.subtitle}>Brzo i jednostavno zakaži termin kod najboljih firmi</p>
           </>
+        )}
+
+        {/* GRAD FILTER */}
+        {gradovi.length > 0 && (
+          <div style={{ marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <label style={{ fontWeight: 500, color: '#333' }}>Odaberite grad:</label>
+            <select 
+              value={selectedGradId || ''}
+              onChange={(e) => setSelectedGradId(parseInt(e.target.value))}
+              style={{
+                padding: '8px 12px',
+                borderRadius: '4px',
+                border: '1px solid #ddd',
+                backgroundColor: '#fff',
+                color: '#333',
+                cursor: 'pointer',
+                fontSize: '14px',
+                minWidth: '150px'
+              }}
+            >
+              {gradovi.map((grad) => (
+                <option key={grad.id} value={grad.id}>{grad.grad}</option>
+              ))}
+            </select>
+          </div>
         )}
 
         {/* CATEGORIES */}

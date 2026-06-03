@@ -15,14 +15,17 @@ export default function KlijentPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('appointments');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editData, setEditData] = useState({ username: '', email: '', brTel: '' });
+  const [editData, setEditData] = useState({ username: '', email: '', brTel: '', grad_id: null });
   const [savingProfile, setSavingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordData, setPasswordData] = useState({ stara_lozinka: '', nova_lozinka: '', potvrdaNova_lozinka: '' });
   const [savingPassword, setSavingPassword] = useState(false);
+  const [gradovi, setGradovi] = useState([]);
+  const [userGradId, setUserGradId] = useState(null);
 
   useEffect(() => {
     checkAuthentication();
+    loadGradovi();
   }, []);
 
   const checkAuthentication = () => {
@@ -50,7 +53,7 @@ export default function KlijentPage() {
   const fetchUserData = async (userId) => {
     try {
       const authToken = localStorage.getItem('authToken');
-      const response = await fetch(`https://mojtermin.site/api/klijent/${userId}`, {
+      const response = await fetch(`http://127.0.0.1:5000/api/klijent/${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -62,6 +65,7 @@ export default function KlijentPage() {
       if (data.status === 200 && data.klijent) {
         // Postavi korisničke podatke
         setUser(data.klijent);
+        setUserGradId(data.klijent.grad_id || null);
         
         // Postavi termine
         if (Array.isArray(data.termini)) {
@@ -75,6 +79,33 @@ export default function KlijentPage() {
     }
   };
 
+  const loadGradovi = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/podesavanja/gradovi');
+      const data = await response.json();
+      
+      if (data.success && Array.isArray(data.gradovi)) {
+        // Sortiraj gradove - Beograd, Niš, Novi Sad na početku
+        const priorityOrder = ['Beograd', 'Niš', 'Novi Sad'];
+        const sorted = data.gradovi.sort((a, b) => {
+          const indexA = priorityOrder.indexOf(a.grad);
+          const indexB = priorityOrder.indexOf(b.grad);
+          
+          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+          return a.grad.localeCompare(b.grad);
+        });
+        
+        setGradovi(sorted);
+      }
+    } catch (error) {
+      console.error('Greška pri preuzimanju gradova:', error);
+    }
+  };
+
+
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userId');
@@ -87,7 +118,8 @@ export default function KlijentPage() {
       setEditData({
         username: user.username || '',
         email: user.email || '',
-        brTel: user.brTel || ''
+        brTel: user.brTel || '',
+        grad_id: user.grad_id || null
       });
       setIsEditingProfile(true);
     }
@@ -95,7 +127,7 @@ export default function KlijentPage() {
 
   const handleCancelEdit = () => {
     setIsEditingProfile(false);
-    setEditData({ username: '', email: '', brTel: '' });
+    setEditData({ username: '', email: '', brTel: '', grad_id: null });
   };
 
   const handleSaveProfile = async () => {
@@ -104,17 +136,23 @@ export default function KlijentPage() {
       const authToken = localStorage.getItem('authToken');
       const userId = localStorage.getItem('userId');
 
-      const response = await fetch(`https://mojtermin.site/api/klijent/${userId}`, {
+      const payload = {
+        username: editData.username,
+        email: editData.email,
+        brTel: editData.brTel
+      };
+      
+      if (editData.grad_id) {
+        payload.grad_id = parseInt(editData.grad_id);
+      }
+
+      const response = await fetch(`http://127.0.0.1:5000/api/klijent/${userId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          username: editData.username,
-          email: editData.email,
-          brTel: editData.brTel
-        })
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json();
@@ -125,8 +163,10 @@ export default function KlijentPage() {
           ...user,
           username: editData.username,
           email: editData.email,
-          brTel: editData.brTel
+          brTel: editData.brTel,
+          grad_id: editData.grad_id
         });
+        setUserGradId(editData.grad_id);
         setIsEditingProfile(false);
         toast.success('Profil je uspešno ažuriran!');
       } else {
@@ -164,7 +204,7 @@ export default function KlijentPage() {
       const authToken = localStorage.getItem('authToken');
       const userId = localStorage.getItem('userId');
 
-      const response = await fetch(`https://mojtermin.site/api/klijent/${userId}/lozinka`, {
+      const response = await fetch(`http://127.0.0.1:5000/api/klijent/${userId}/lozinka`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -412,6 +452,25 @@ export default function KlijentPage() {
                       }}
                     />
                   </div>
+                  <div className={styles.profileField}>
+                    <label>Grad:</label>
+                    <select
+                      value={editData.grad_id || ''}
+                      onChange={(e) => setEditData({ ...editData, grad_id: e.target.value ? parseInt(e.target.value) : null })}
+                      style={{
+                        width: '100%',
+                        padding: '8px',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        fontSize: '14px'
+                      }}
+                    >
+                      <option value="">-- Odaberite grad --</option>
+                      {gradovi.map((grad) => (
+                        <option key={grad.id} value={grad.id}>{grad.grad}</option>
+                      ))}
+                    </select>
+                  </div>
                   <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
                     <button
                       onClick={handleSaveProfile}
@@ -457,14 +516,20 @@ export default function KlijentPage() {
                     <label>Registrovan:</label>
                     <p>{user?.created_at ? new Date(user.created_at).toLocaleDateString('sr-RS') : 'N/A'}</p>
                   </div>
-                  <button
-                    onClick={handleEditProfile}
-                    className={styles.primaryBtn}
-                    style={{ marginTop: '20px', width: '100%' }}
-                  >
-                    <i className="fa-solid fa-edit" style={{ marginRight: '8px' }}></i>
-                    Izmeni Profil
-                  </button>
+                  <div className={styles.profileField}>
+                    <label>Podrazumevani Grad:</label>
+                    <p>{gradovi.find(g => g.id === userGradId)?.grad || 'Nije odabran'}</p>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                    <button
+                      onClick={handleEditProfile}
+                      className={styles.primaryBtn}
+                      style={{ flex: 1 }}
+                    >
+                      <i className="fa-solid fa-edit" style={{ marginRight: '8px' }}></i>
+                      Izmeni Profil
+                    </button>
+                  </div>
                 </>
               )}
             </div>

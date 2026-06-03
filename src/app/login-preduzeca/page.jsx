@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 
+
 const LoginContent = () => {
   const searchParams = useSearchParams();
   const [Login, setLogin] = useState(searchParams.get('register') === 'true');
@@ -45,7 +46,7 @@ const LoginContent = () => {
     
     setLoading(true);
     try {
-      const res = await fetch('https://mojtermin.site/api/auth/login', {
+      const res = await fetch('http://127.0.0.1:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -185,7 +186,7 @@ const LoginContent = () => {
     const rola = 1; // vlasnik rola
   
     try {
-      const res = await fetch('https://mojtermin.site/api/auth/signup', {
+      const res = await fetch('http://127.0.0.1:5000/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -302,6 +303,7 @@ const LoginContent = () => {
                   type='text' className={styles.formStyle} placeholder='Broj telefona'/>
                   <i className={`${styles.inputIcon} uil uil-phone`}></i>
                 </div>
+
                 <div style={{ color: '#fff' }}>
                   <input 
                     type="checkbox" 
