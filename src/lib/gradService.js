@@ -4,7 +4,7 @@
 
 export const fetchGradovi = async () => {
   try {
-    const response = await fetch('https://mojtermin.site/api/podesavanja/gradovi');
+    const response = await fetch('http://127.0.0.1:5000/api/podesavanja/gradovi');
     const data = await response.json();
 
     if (data.success) {

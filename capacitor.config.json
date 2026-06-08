@@ -1,0 +1,12 @@
+{
+  "appId": "com.mojtermin.app",
+  "appName": "Moj Termin",
+  "webDir": "public",
+  "android": {
+    "path": "../android"
+  },
+  "server": {
+    "url": "https://mojtermin.site",
+    "cleartext": false
+  }
+}

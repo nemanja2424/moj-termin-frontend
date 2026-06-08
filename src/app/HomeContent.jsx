@@ -7,6 +7,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './page.module.css';
 import Footer from '@/components/Footer';
+import LocationPermission from '@/components/LocationPermission';
+import { useLocationPermission } from '@/hooks/useLocationPermission';
 
 export default function HomeContent() {
   const router = useRouter();
@@ -22,6 +24,10 @@ export default function HomeContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [gradovi, setGradovi] = useState([]);
   const [selectedGradId, setSelectedGradId] = useState(null);
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  
+  // Koristi hook za upravljanje dozvolom lokacije
+  const { permissionStatus, loading: locationLoading } = useLocationPermission();
 
   useEffect(() => {
     checkAuthentication();
@@ -39,6 +45,13 @@ export default function HomeContent() {
     }
   }, []);
 
+  // Prikaži Location Permission modal ako je status 'pending'
+  useEffect(() => {
+    if (!locationLoading && permissionStatus === 'pending') {
+      setShowLocationModal(true);
+    }
+  }, [permissionStatus, locationLoading]);
+
   // Kada se gradovi učitaju, odredi odabrani grad
   useEffect(() => {
     if (gradovi.length > 0) {
@@ -49,7 +62,7 @@ export default function HomeContent() {
         if (authToken && isTokenValid(authToken)) {
           // Korisnik je prijavljen - preuzmi njegov grad
           try {
-            const response = await fetch('https://mojtermin.site/api/podesavanja/korisnik-grad', {
+            const response = await fetch('http://127.0.0.1:5000/api/podesavanja/korisnik-grad', {
               headers: {
                 'Authorization': `Bearer ${authToken}`
               }
@@ -127,7 +140,7 @@ export default function HomeContent() {
 
   const loadGradovi = async () => {
     try {
-      const response = await fetch('https://mojtermin.site/api/podesavanja/gradovi');
+      const response = await fetch('http://127.0.0.1:5000/api/podesavanja/gradovi');
       const data = await response.json();
       
       if (data.success && Array.isArray(data.gradovi)) {
@@ -153,10 +166,16 @@ export default function HomeContent() {
   const fetchPreduzecaAndKategorije = async (gradId) => {
     try {
       const url = gradId ? 
-        `https://mojtermin.site/api/preduzeca/get?grad_id=${gradId}` : 
-        'https://mojtermin.site/api/preduzeca/get';
+        `http://127.0.0.1:5000/api/preduzeca/get?grad_id=${gradId}` : 
+        'http://127.0.0.1:5000/api/preduzeca/get';
       
-      const response = await fetch(url);
+      const headers = {};
+      const authToken = localStorage.getItem('authToken');
+      if (authToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+      }
+      
+      const response = await fetch(url, { headers });
       const data = await response.json();
       
       if (data.success && Array.isArray(data.preduzeca)) {
@@ -201,7 +220,7 @@ export default function HomeContent() {
   const getImageUrl = (putnja) => {
     if (!putnja) return null;
     if (putnja.startsWith('http')) return putnja;
-    return `https://mojtermin.site/api/logo/${putnja}`;
+    return `http://127.0.0.1:5000/api/logo/${putnja}`;
   };
 
   // Mapping kategorija na ikone
@@ -249,6 +268,8 @@ export default function HomeContent() {
       kat.kategorija.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
+
+
 
   return (
     <div className={styles.container}>
@@ -532,6 +553,19 @@ export default function HomeContent() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* LOCATION PERMISSION MODAL - Prikazuje se kada korisnik prvi put poseti stranicu */}
+      {showLocationModal && (
+        <LocationPermission
+          onAllow={() => {
+            toast.success('Dozvola za lokaciju je odobrena!');
+            setShowLocationModal(false);
+          }}
+          onDeny={() => {
+            setShowLocationModal(false);
+          }}
+        />
       )}
 
       <ToastContainer 

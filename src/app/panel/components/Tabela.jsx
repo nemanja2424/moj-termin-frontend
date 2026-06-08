@@ -8,11 +8,10 @@ import { reactMaxHeadersLength } from "../../../../next.config";
 
 export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin, showFilters, resetFiltersKey, dashboard }) {
   const [desavanja, setDesavanja] = useState([]);
-  const [rola, setRola] = useState(null); //1 = vlasnik; 2 = korisnik; Eventualno 3 = admin
+  const [rola, setRola] = useState(null);
   const [sortKey, setSortKey] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
   const [statusFilter, setStatusFilter] = useState('');
-  const [lokacijaFilter, setLokacijaFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [createdFrom, setCreatedFrom] = useState('');
@@ -50,7 +49,7 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
     const authToken = localStorage.getItem('authToken');
     const userId = localStorage.getItem('userId');
     termin.potvrdio = userId;
-    const res = await fetch("https://mojtermin.site/api/potvrdi_termin", {
+    const res = await fetch("http://127.0.0.1:5000/api/potvrdi_termin", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -146,7 +145,6 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
   const filtriranaDesavanja = desavanja.filter(event => {
     let statusOk = true;
     let datumOk = true;
-    let lokacijaOk = true;
     let createdOk = true;
 
     // Filtriranje po statusu
@@ -167,12 +165,6 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
       datumOk = eventDatum <= dateTo;
     }
 
-    // Filtriranje po lokaciji
-    if (lokacijaFilter) {
-      const eventLokacija = event.ime_firme || event.ime_lokacije || event.lokacija?.ime;
-      lokacijaOk = String(eventLokacija) === lokacijaFilter;
-    }
-
     // Created_at filter - parsira HTTP datum format (Wed, 25 Mar 2026 17:46:31 GMT)
     let createdDate = '';
     if (event.created_at) {
@@ -189,7 +181,7 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
     if (createdTo && createdDate && createdDate > createdTo) createdOk = false;
 
 
-    return statusOk && datumOk && lokacijaOk && createdOk;
+    return statusOk && datumOk && createdOk;
   });
   // Helper da konvertuješ string yyyy-mm-dd u Date objekat (koristi lokalno vreme, ne UTC)
   const toDate = (str) => {
@@ -211,7 +203,6 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
 
   useEffect(() => {
     setStatusFilter('');
-    setLokacijaFilter('');
     setDateFrom('');
     setDateTo('');
     setCreatedFrom('');
@@ -232,21 +223,6 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
           </select>
         </label>
 
-        {rola === "1" && (
-          <label>
-            Lokacija:
-            <select value={lokacijaFilter} onChange={e => setLokacijaFilter(e.target.value)}>
-              <option value="">Sve</option>
-              {Array.isArray(desavanja) && [...new Set(desavanja.map(d => d.ime_firme))]
-                .filter(id => id !== null && id !== undefined && id !== '-')
-                .map(id => (
-                  <option key={id} value={id}>
-                    {id}
-                  </option>
-                ))}
-            </select>
-          </label>
-        )}
 
         
         <label>
@@ -346,11 +322,6 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
         <table className={`${styles.tabela} ${showFilters ? styles.open : ''}`}>
           <thead>
             <tr>
-              {rola === "1" && (
-                <th onClick={() => handleSort('ime_firme')}>
-                  Lokacija{sortKey === 'ime_firme' && (sortOrder === 'asc' ? '▲' : '▼')}
-                </th>
-              )}
               <th onClick={() => handleSort('created_at')}>
                 Zakazano{sortKey === 'created_at' && (sortOrder === 'asc' ? '▲' : '▼')}
               </th>
@@ -379,9 +350,6 @@ export default function Tabela({ desavanjaData, fetchData, loading, izmeniTermin
           <tbody>
             {filtriranaDesavanja.map((event, idx) => (
               <tr key={idx} style={{cursor:'pointer'}} onClick={() => izmeniTermin(event)}>
-                {rola === "1" && (
-                  <td>{event.ime_firme || '-'}</td>
-                )}
                 <td>{formatirajTimestamp(event.created_at) || formatirajTimestamp(event.datum_rezervacije)}</td>
                 <td>{event.ime || '-'}</td>
                 <td>{formatirajDatum(event.datum || event.datum_rezervacije)}</td>
