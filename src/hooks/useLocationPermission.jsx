@@ -95,6 +95,11 @@ export function useLocationPermission() {
       const status = await getPreference(LOCATION_PERMISSION_KEY);
       const locationJson = await getPreference(LOCATION_DATA_KEY);
 
+      console.log('🔍 Initializing location permission...');
+      console.log('📦 Stored status:', status);
+      console.log('📍 Stored location:', locationJson);
+      console.log('📱 Is native platform:', isNativePlatform());
+
       if (status) {
         setPermissionStatus(status);
       } else {
