@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { Preferences } from '@capacitor/preferences';
 
 const LOCATION_PERMISSION_KEY = 'location_permission_status';
 const LOCATION_DATA_KEY = 'user_location_data';
+const LOCATION_DISMISSED_KEY = 'location_permission_dismissed';
 
 export function useLocationPermission() {
   const [permissionStatus, setPermissionStatus] = useState(null); // 'granted', 'denied', 'pending'
@@ -20,14 +22,8 @@ export function useLocationPermission() {
 
   const isNativePlatform = () => {
     if (typeof window === 'undefined') return false;
-    
-    return (
-      window.cordova !== undefined || 
-      navigator.userAgent.includes('Android') ||
-      navigator.userAgent.includes('iPhone') ||
-      navigator.userAgent.includes('iPad') ||
-      navigator.userAgent.includes('Capacitor')
-    );
+
+    return Capacitor.isNativePlatform();
   };
 
   const isWebPlatform = () => {
@@ -92,14 +88,9 @@ export function useLocationPermission() {
   // ============= INITIALIZATION =============
   const initializeLocationPermission = async () => {
     try {
-      const status = await getPreference(LOCATION_PERMISSION_KEY);
+      const savedStatus = await getPreference(LOCATION_PERMISSION_KEY);
+      const dismissed = await getPreference(LOCATION_DISMISSED_KEY);
       const locationJson = await getPreference(LOCATION_DATA_KEY);
-
-      if (status) {
-        setPermissionStatus(status);
-      } else {
-        setPermissionStatus('pending');
-      }
 
       if (locationJson) {
         try {
@@ -108,6 +99,46 @@ export function useLocationPermission() {
           console.error('Error parsing location data:', e);
           setLocationData(null);
         }
+      }
+
+      if (isNativePlatform()) {
+        const nativeStatus = await checkPermissionStatus();
+
+        if (nativeStatus === 'granted') {
+          setPermissionStatus('granted');
+          await setPreference(LOCATION_PERMISSION_KEY, 'granted');
+          await removePreference(LOCATION_DISMISSED_KEY);
+          return;
+        }
+
+        if (nativeStatus === 'prompt' || nativeStatus === 'prompt-with-rationale') {
+          if (dismissed === 'true') {
+            setPermissionStatus('denied');
+            return;
+          }
+
+          if (savedStatus === 'denied') {
+            await removePreference(LOCATION_PERMISSION_KEY);
+          }
+
+          setPermissionStatus('pending');
+          return;
+        }
+
+        if (dismissed === 'true') {
+          setPermissionStatus('denied');
+          await setPreference(LOCATION_PERMISSION_KEY, 'denied');
+          return;
+        }
+
+        setPermissionStatus('pending');
+        return;
+      }
+
+      if (savedStatus) {
+        setPermissionStatus(savedStatus);
+      } else {
+        setPermissionStatus('pending');
       }
     } catch (err) {
       console.error('Error initializing location permission:', err);
@@ -144,6 +175,7 @@ export function useLocationPermission() {
             // Čuva u localStorage
             await setPreference(LOCATION_PERMISSION_KEY, 'granted');
             await setPreference(LOCATION_DATA_KEY, JSON.stringify(location));
+            await removePreference(LOCATION_DISMISSED_KEY);
 
             setPermissionStatus('granted');
             setLocationData(location);
@@ -177,7 +209,7 @@ export function useLocationPermission() {
       const status = await Geolocation.checkPermissions();
 
       let permissionGiven = false;
-      if (status.location === 'denied' || status.location === 'prompt') {
+      if (status.location === 'prompt' || status.location === 'prompt-with-rationale') {
         // Traži dozvolu
         const result = await Geolocation.requestPermissions();
         permissionGiven = result.location === 'granted';
@@ -200,6 +232,7 @@ export function useLocationPermission() {
         // Čuva u Capacitor Preferences
         await setPreference(LOCATION_PERMISSION_KEY, 'granted');
         await setPreference(LOCATION_DATA_KEY, JSON.stringify(location));
+        await removePreference(LOCATION_DISMISSED_KEY);
 
         setPermissionStatus('granted');
         setLocationData(location);
@@ -252,6 +285,7 @@ export function useLocationPermission() {
   const denyPermission = async () => {
     try {
       await setPreference(LOCATION_PERMISSION_KEY, 'denied');
+      await setPreference(LOCATION_DISMISSED_KEY, 'true');
       setPermissionStatus('denied');
       return { success: true };
     } catch (err) {
@@ -266,6 +300,7 @@ export function useLocationPermission() {
     try {
       await removePreference(LOCATION_DATA_KEY);
       await removePreference(LOCATION_PERMISSION_KEY);
+      await removePreference(LOCATION_DISMISSED_KEY);
 
       setPermissionStatus('pending');
       setLocationData(null);

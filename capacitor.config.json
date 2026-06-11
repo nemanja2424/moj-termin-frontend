@@ -6,7 +6,7 @@
     "path": "../android"
   },
   "server": {
-    "url": "https://mojtermin.site",
+    "url": "https://test.mojtermin.site",
     "cleartext": false
   }
 }
