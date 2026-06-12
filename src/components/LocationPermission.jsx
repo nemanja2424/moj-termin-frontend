@@ -11,7 +11,7 @@ export default function LocationPermission({ onAllow, onDeny }) {
     
     if (result.success) {
       const { latitude, longitude } = result.location;
-      onAllow({ latitude, longitude });
+      await onAllow?.({ latitude, longitude });
     } else {
       let errorMessage = 'Nije moguće pristupiti lokaciji.';
       

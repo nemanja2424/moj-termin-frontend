@@ -10,9 +10,12 @@ import Footer from '@/components/Footer';
 import LocationPermission from '@/components/LocationPermission';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+
 export default function HomeContent() {
   const router = useRouter();
   const inputRef = useRef(null);
+  const locationResolveStartedRef = useRef(false);
   const [preduzeca, setPreduzeca] = useState([]);
   const [kategorije, setKategorije] = useState([]);
   const [filteredPreduzeca, setFilteredPreduzeca] = useState([]);
@@ -27,7 +30,12 @@ export default function HomeContent() {
   const [showLocationModal, setShowLocationModal] = useState(false);
   
   // Koristi hook za upravljanje dozvolom lokacije
-  const { permissionStatus, loading: locationLoading } = useLocationPermission();
+  const {
+    permissionStatus,
+    locationData,
+    loading: locationLoading,
+    requestPermission,
+  } = useLocationPermission();
 
   useEffect(() => {
     checkAuthentication();
@@ -54,7 +62,7 @@ export default function HomeContent() {
 
   // Kada se gradovi učitaju, odredi odabrani grad
   useEffect(() => {
-    if (gradovi.length > 0) {
+    if (gradovi.length > 0 && selectedGradId === null) {
       const selectGrad = async () => {
         const authToken = localStorage.getItem('authToken');
         const defaultGradId = gradovi[0].id;
@@ -86,7 +94,7 @@ export default function HomeContent() {
 
       selectGrad();
     }
-  }, [gradovi]);
+  }, [gradovi, selectedGradId]);
 
   useEffect(() => {
     if (selectedGradId !== null) {
@@ -193,6 +201,66 @@ export default function HomeContent() {
       setLoading(false);
     }
   };
+
+  const resolveGradFromLocation = async ({ latitude, longitude }) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/lokacija/grad`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ latitude, longitude }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.grad?.id) {
+        setSelectedGradId(data.grad.id);
+        toast.info(`Prikazujemo firme iz grada: ${data.grad.grad}`);
+        return;
+      }
+
+      console.warn('Grad nije pronadjen za lokaciju:', data);
+    } catch (error) {
+      console.error('Error resolving city from location:', error);
+    }
+  };
+
+  const handleLocationAllowed = async (location) => {
+    toast.success('Dozvola za lokaciju je odobrena!');
+    setShowLocationModal(false);
+
+    if (location?.latitude && location?.longitude) {
+      locationResolveStartedRef.current = true;
+      await resolveGradFromLocation(location);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      locationResolveStartedRef.current ||
+      locationLoading ||
+      permissionStatus !== 'granted'
+    ) {
+      return;
+    }
+
+    locationResolveStartedRef.current = true;
+
+    const resolveSavedOrFreshLocation = async () => {
+      if (locationData?.latitude && locationData?.longitude) {
+        await resolveGradFromLocation(locationData);
+        return;
+      }
+
+      const result = await requestPermission();
+      if (result.success && result.location) {
+        await resolveGradFromLocation(result.location);
+      }
+    };
+
+    resolveSavedOrFreshLocation();
+  }, [permissionStatus, locationLoading, locationData, requestPermission]);
 
   useEffect(() => {
     let filtered = preduzeca;
@@ -558,10 +626,7 @@ export default function HomeContent() {
       {/* LOCATION PERMISSION MODAL - Prikazuje se kada korisnik prvi put poseti stranicu */}
       {showLocationModal && (
         <LocationPermission
-          onAllow={() => {
-            toast.success('Dozvola za lokaciju je odobrena!');
-            setShowLocationModal(false);
-          }}
+          onAllow={handleLocationAllowed}
           onDeny={() => {
             setShowLocationModal(false);
           }}
