@@ -10,7 +10,7 @@ import Footer from '@/components/Footer';
 import LocationPermission from '@/components/LocationPermission';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://test.mojtermin.site/api';
 
 export default function HomeContent() {
   const router = useRouter();
