@@ -10,19 +10,17 @@ const LOCATION_DATA_KEY = 'user_location_data';
 const LOCATION_DISMISSED_KEY = 'location_permission_dismissed';
 
 export function useLocationPermission() {
-  const [permissionStatus, setPermissionStatus] = useState(null); // 'granted', 'denied', 'pending'
+  const [permissionStatus, setPermissionStatus] = useState(null);
   const [locationData, setLocationData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Detektuj platformu pri prvom učitavanju
   useEffect(() => {
     initializeLocationPermission();
   }, []);
 
   const isNativePlatform = () => {
     if (typeof window === 'undefined') return false;
-
     return Capacitor.isNativePlatform();
   };
 
@@ -30,7 +28,6 @@ export function useLocationPermission() {
     return !isNativePlatform();
   };
 
-  // ============= STORAGE HELPERS =============
   const getPreference = async (key) => {
     if (isNativePlatform()) {
       try {
@@ -40,14 +37,13 @@ export function useLocationPermission() {
         console.error('Error getting Capacitor preference:', err);
         return null;
       }
-    } else {
-      // Web - koristi localStorage
-      try {
-        return localStorage.getItem(key) || null;
-      } catch (err) {
-        console.error('Error getting localStorage:', err);
-        return null;
-      }
+    }
+
+    try {
+      return localStorage.getItem(key) || null;
+    } catch (err) {
+      console.error('Error getting localStorage:', err);
+      return null;
     }
   };
 
@@ -58,13 +54,13 @@ export function useLocationPermission() {
       } catch (err) {
         console.error('Error setting Capacitor preference:', err);
       }
-    } else {
-      // Web - koristi localStorage
-      try {
-        localStorage.setItem(key, value);
-      } catch (err) {
-        console.error('Error setting localStorage:', err);
-      }
+      return;
+    }
+
+    try {
+      localStorage.setItem(key, value);
+    } catch (err) {
+      console.error('Error setting localStorage:', err);
     }
   };
 
@@ -75,17 +71,16 @@ export function useLocationPermission() {
       } catch (err) {
         console.error('Error removing Capacitor preference:', err);
       }
-    } else {
-      // Web - koristi localStorage
-      try {
-        localStorage.removeItem(key);
-      } catch (err) {
-        console.error('Error removing localStorage:', err);
-      }
+      return;
+    }
+
+    try {
+      localStorage.removeItem(key);
+    } catch (err) {
+      console.error('Error removing localStorage:', err);
     }
   };
 
-  // ============= INITIALIZATION =============
   const initializeLocationPermission = async () => {
     try {
       const savedStatus = await getPreference(LOCATION_PERMISSION_KEY);
@@ -95,8 +90,8 @@ export function useLocationPermission() {
       if (locationJson) {
         try {
           setLocationData(JSON.parse(locationJson));
-        } catch (e) {
-          console.error('Error parsing location data:', e);
+        } catch (err) {
+          console.error('Error parsing location data:', err);
           setLocationData(null);
         }
       }
@@ -135,11 +130,7 @@ export function useLocationPermission() {
         return;
       }
 
-      if (savedStatus) {
-        setPermissionStatus(savedStatus);
-      } else {
-        setPermissionStatus('pending');
-      }
+      setPermissionStatus(savedStatus || 'pending');
     } catch (err) {
       console.error('Error initializing location permission:', err);
       setPermissionStatus('pending');
@@ -148,11 +139,10 @@ export function useLocationPermission() {
     }
   };
 
-  // ============= WEB GEOLOCATION =============
   const requestPermissionWeb = async () => {
     return new Promise((resolve) => {
       if (!navigator.geolocation) {
-        const errorMsg = 'Tvoj pregledač ne podržava geolokaciju';
+        const errorMsg = 'Tvoj pregledac ne podrzava geolokaciju';
         console.error(errorMsg);
         setError(errorMsg);
         setPermissionStatus('denied');
@@ -164,7 +154,6 @@ export function useLocationPermission() {
         async (position) => {
           try {
             const { latitude, longitude, accuracy } = position.coords;
-
             const location = {
               latitude,
               longitude,
@@ -172,7 +161,6 @@ export function useLocationPermission() {
               timestamp: new Date().toISOString(),
             };
 
-            // Čuva u localStorage
             await setPreference(LOCATION_PERMISSION_KEY, 'granted');
             await setPreference(LOCATION_DATA_KEY, JSON.stringify(location));
             await removePreference(LOCATION_DISMISSED_KEY);
@@ -189,12 +177,9 @@ export function useLocationPermission() {
         },
         (error) => {
           console.error('Error getting location (Web):', error);
-          const errorMsg = error.message || 'Nije moguće pristupiti lokaciji';
+          const errorMsg = error.message || 'Nije moguce pristupiti lokaciji';
           setError(errorMsg);
-
-          // Čuva da je dozvola odbijena
           setPreference(LOCATION_PERMISSION_KEY, 'denied').catch(console.error);
-
           setPermissionStatus('denied');
           resolve({ success: false, reason: errorMsg });
         }
@@ -202,15 +187,16 @@ export function useLocationPermission() {
     });
   };
 
-  // ============= NATIVE GEOLOCATION =============
   const requestPermissionNative = async () => {
     try {
-      // Prvo proverite status dozvole
       const status = await Geolocation.checkPermissions();
-
       let permissionGiven = false;
-      if (status.location === 'prompt' || status.location === 'prompt-with-rationale') {
-        // Traži dozvolu
+
+      if (
+        status.location === 'denied' ||
+        status.location === 'prompt' ||
+        status.location === 'prompt-with-rationale'
+      ) {
         const result = await Geolocation.requestPermissions();
         permissionGiven = result.location === 'granted';
       } else if (status.location === 'granted') {
@@ -218,10 +204,8 @@ export function useLocationPermission() {
       }
 
       if (permissionGiven) {
-        // Dobij lokaciju
         const position = await Geolocation.getCurrentPosition();
         const { latitude, longitude, accuracy } = position.coords;
-
         const location = {
           latitude,
           longitude,
@@ -229,7 +213,6 @@ export function useLocationPermission() {
           timestamp: new Date().toISOString(),
         };
 
-        // Čuva u Capacitor Preferences
         await setPreference(LOCATION_PERMISSION_KEY, 'granted');
         await setPreference(LOCATION_DATA_KEY, JSON.stringify(location));
         await removePreference(LOCATION_DISMISSED_KEY);
@@ -238,40 +221,30 @@ export function useLocationPermission() {
         setLocationData(location);
 
         return { success: true, location };
-      } else {
-        // Korisnik je odbio dozvolu
-        await setPreference(LOCATION_PERMISSION_KEY, 'denied');
-
-        setPermissionStatus('denied');
-        return { success: false, reason: 'Permission denied' };
       }
+
+      await setPreference(LOCATION_PERMISSION_KEY, 'denied');
+      setPermissionStatus('denied');
+      return { success: false, reason: 'Permission denied' };
     } catch (err) {
       console.error('Error requesting location (Native):', err);
       setError(err.message);
-
       await setPreference(LOCATION_PERMISSION_KEY, 'denied');
-
       setPermissionStatus('denied');
       return { success: false, reason: err.message };
     }
   };
 
-  // ============= PUBLIC METHODS =============
   const requestPermission = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      let result;
       if (isNativePlatform()) {
-        console.log('Using NATIVE geolocation (Android/iOS)');
-        result = await requestPermissionNative();
-      } else {
-        console.log('Using WEB geolocation (Browser)');
-        result = await requestPermissionWeb();
+        return await requestPermissionNative();
       }
 
-      return result;
+      return await requestPermissionWeb();
     } catch (err) {
       console.error('Error requesting permission:', err);
       setError(err.message);
@@ -325,13 +298,12 @@ export function useLocationPermission() {
       }
     }
 
-    // Web platforme - nema mogućnosti da se proveri status unapred
     return 'prompt';
   };
 
   return {
-    permissionStatus, // 'granted', 'denied', 'pending'
-    locationData, // { latitude, longitude, accuracy, timestamp }
+    permissionStatus,
+    locationData,
     loading,
     error,
     requestPermission,
