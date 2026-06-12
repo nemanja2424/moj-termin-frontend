@@ -16,10 +16,37 @@ const LoginContent = () => {
   const [Login, setLogin] = useState(searchParams.get('register') === 'true');
 
   useEffect(() => {
-    const authToken = localStorage.getItem('authToken');
-    if (authToken) {
-      window.location.href = "/";
-    }
+    const checkAuth = async () => {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/provera', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          window.location.href = '/';
+        } else {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('rola');
+        }
+      } catch (error) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('rola');
+      }
+    };
+
+    checkAuth();
     loadGradovi();
   }, []);
 
