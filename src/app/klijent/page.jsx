@@ -53,7 +53,7 @@ export default function KlijentPage() {
   const fetchUserData = async (userId) => {
     try {
       const authToken = localStorage.getItem('authToken');
-      const response = await fetch(`https://test.mojtermin.site/api/klijent/${userId}`, {
+      const response = await fetch(`http://127.0.0.1:5000/api/klijent/${userId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -81,7 +81,7 @@ export default function KlijentPage() {
 
   const loadGradovi = async () => {
     try {
-      const response = await fetch('https://test.mojtermin.site/api/podesavanja/gradovi');
+      const response = await fetch('http://127.0.0.1:5000/api/podesavanja/gradovi');
       const data = await response.json();
       
       if (data.success && Array.isArray(data.gradovi)) {
@@ -146,7 +146,7 @@ export default function KlijentPage() {
         payload.grad_id = parseInt(editData.grad_id);
       }
 
-      const response = await fetch(`https://test.mojtermin.site/api/klijent/${userId}`, {
+      const response = await fetch(`http://127.0.0.1:5000/api/klijent/${userId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -204,7 +204,7 @@ export default function KlijentPage() {
       const authToken = localStorage.getItem('authToken');
       const userId = localStorage.getItem('userId');
 
-      const response = await fetch(`https://test.mojtermin.site/api/klijent/${userId}/lozinka`, {
+      const response = await fetch(`http://127.0.0.1:5000/api/klijent/${userId}/lozinka`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${authToken}`,

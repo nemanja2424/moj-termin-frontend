@@ -10,7 +10,7 @@ import Footer from '@/components/Footer';
 import LocationPermission from '@/components/LocationPermission';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://test.mojtermin.site/api')
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000/api')
 
 export default function HomeContent() {
   const router = useRouter();
@@ -70,7 +70,7 @@ export default function HomeContent() {
         if (authToken && isTokenValid(authToken)) {
           // Korisnik je prijavljen - preuzmi njegov grad
           try {
-            const response = await fetch('https://test.mojtermin.site/api/podesavanja/korisnik-grad', {
+            const response = await fetch('http://127.0.0.1:5000/api/podesavanja/korisnik-grad', {
               headers: {
                 'Authorization': `Bearer ${authToken}`
               }
@@ -148,7 +148,7 @@ export default function HomeContent() {
 
   const loadGradovi = async () => {
     try {
-      const response = await fetch('https://test.mojtermin.site/api/podesavanja/gradovi');
+      const response = await fetch('http://127.0.0.1:5000/api/podesavanja/gradovi');
       const data = await response.json();
       
       if (data.success && Array.isArray(data.gradovi)) {
@@ -174,8 +174,8 @@ export default function HomeContent() {
   const fetchPreduzecaAndKategorije = async (gradId) => {
     try {
       const url = gradId ? 
-        `https://test.mojtermin.site/api/preduzeca/get?grad_id=${gradId}` : 
-        'https://test.mojtermin.site/api/preduzeca/get';
+        `http://127.0.0.1:5000/api/preduzeca/get?grad_id=${gradId}` : 
+        'http://127.0.0.1:5000/api/preduzeca/get';
       
       const headers = {};
       const authToken = localStorage.getItem('authToken');
@@ -288,7 +288,7 @@ export default function HomeContent() {
   const getImageUrl = (putnja) => {
     if (!putnja) return null;
     if (putnja.startsWith('http')) return putnja;
-    return `https://test.mojtermin.site/api/logo/${putnja}`;
+    return `http://127.0.0.1:5000/api/logo/${putnja}`;
   };
 
   // Mapping kategorija na ikone
