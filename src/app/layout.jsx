@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
+import AndroidBackButtonHandler from "@/components/AndroidBackButtonHandler";
 import {
   organizationSchema,
   localBusinessSchema,
@@ -195,6 +197,9 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-title" content="MojTermin" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <Suspense fallback={null}>
+          <AndroidBackButtonHandler />
+        </Suspense>
         {children}
       </body>
     </html>

@@ -10,9 +10,7 @@ import Footer from '@/components/Footer';
 import LocationPermission from '@/components/LocationPermission';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://test.mojtermin.site')
-  .replace(/\/api\/?$/, '')
-  .replace(/\/$/, '');
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://test.mojtermin.site/api')
 
 export default function HomeContent() {
   const router = useRouter();
@@ -206,7 +204,7 @@ export default function HomeContent() {
 
   const resolveGradFromLocation = async ({ latitude, longitude }) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/lokacija/grad`, {
+      const response = await fetch(`${API_BASE_URL}/lokacija/grad`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
