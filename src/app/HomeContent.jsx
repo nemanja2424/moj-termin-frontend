@@ -10,7 +10,9 @@ import Footer from '@/components/Footer';
 import LocationPermission from '@/components/LocationPermission';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://test.mojtermin.site/api';
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://test.mojtermin.site')
+  .replace(/\/api\/?$/, '')
+  .replace(/\/$/, '');
 
 export default function HomeContent() {
   const router = useRouter();
