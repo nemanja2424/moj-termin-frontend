@@ -42,7 +42,7 @@ export default function ZakaziPage() {
     }, []);
 
     const fetchData = async () => {
-        const res = await fetch(`https://test.mojtermin.site/api/zakazi/${id}/forma`);
+        const res = await fetch(`https://mojtermin.site/api/zakazi/${id}/forma`);
         if (!res.ok) {
             toast.error('Greška prilikom učitavanja podataka');
             console.log(res);
@@ -57,7 +57,7 @@ export default function ZakaziPage() {
         const rola = localStorage.getItem('rola');
         if (rola === '3') {
             try {
-                const klijentRes = await fetch(`https://test.mojtermin.site/api/klijent/${id}`);
+                const klijentRes = await fetch(`https://mojtermin.site/api/klijent/${id}`);
                 if (klijentRes.ok) {
                     const klijentData = await klijentRes.json();
                     const klijent = klijentData.klijent;
@@ -135,8 +135,8 @@ export default function ZakaziPage() {
         };
         
         const url = localhost
-            ? 'https://test.mojtermin.site/api/zakazi'
-            : 'https://test.mojtermin.site/api/zakazi';
+            ? 'https://mojtermin.site/api/zakazi'
+            : 'https://mojtermin.site/api/zakazi';
 
         try {
             const res = await fetch(url, {
